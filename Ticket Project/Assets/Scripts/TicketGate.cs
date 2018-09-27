@@ -40,13 +40,7 @@ public class TicketGate : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if (_gate == GateContoroller.Ticket)
-            {
-                //切符が間違っているかどうかを取得(間違ってたらNO,あってたらTicket_OK1)
-                _gate = GateContoroller.Ticket_OK1;
-            }else{
-                //ポコポコ怒りアニメーション
-            }
+            TicketSort();
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -96,6 +90,20 @@ public class TicketGate : MonoBehaviour
         //タイマーを開始する
         timeOn = true;
     }
+
+    private void TicketSort()
+    {
+        if (_gate == GateContoroller.Ticket)
+        {
+            //切符が間違っているかどうかを取得(間違ってたらNO,あってたらTicket_OK1)
+            _gate = GateContoroller.Ticket_OK1;
+        }
+        else
+        {
+            //ポコポコ怒りアニメーション
+        }
+    }
+
 
     private void Completed()
     {
