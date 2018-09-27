@@ -20,13 +20,29 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager> {
         stageClear,
     }
 
-    public List<SoundType> sounds = new List<SoundType>();
+    public List<AudioClip> sounds = new List<AudioClip>();
+    public List<AudioClip> bgm = new List<AudioClip>();
 
-    public void PlaySound(SoundType value) {
+    private AudioSource bgmSource;
 
+    private void Start()
+    {
+        bgmSource = gameObject.AddComponent<AudioSource>();
     }
 
-    public void PlayBGM(BGMType value) {
+    public AudioSource PlaySE(SoundType value) {
+        AudioSource audio = new GameObject().AddComponent<AudioSource>();
+        audio.clip = sounds[(int)value];
+        return audio;
+    }
 
+    public AudioSource PlayBGM(BGMType value) {
+        AudioSource audio = bgmSource;
+        audio.clip = bgm[(int)value];
+        return audio;
+    }
+
+    public void StopBGM() {
+        bgmSource.Stop();
     }
 }
