@@ -33,11 +33,13 @@ public class TicketGate : MonoBehaviour
     {
         timeOn = false;
         timer = 0;
+        SetTicket(TicketType.paper);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (_gate == GateContoroller.Start) return;
         if (timeOn) { timer += Time.deltaTime; }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -48,8 +50,11 @@ public class TicketGate : MonoBehaviour
         {
             if (_gate == GateContoroller.Ticket_OK1) {
                 _gate = GateContoroller.Ticket_OK2;
-            }else{
+                //Debug.Log("↓");
+            }
+            else{
                 //ポコポコ怒りアニメーション
+                //Debug.Log("??");
             }
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -57,8 +62,11 @@ public class TicketGate : MonoBehaviour
             if (_gate == GateContoroller.Ticket_OK2)
             {
                 Completed();
-            }else{
+                //Debug.Log("→");
+            }
+            else{
                 //ポコポコ怒りアニメーション
+                //Debug.Log("??");
             }
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -66,9 +74,11 @@ public class TicketGate : MonoBehaviour
             if (_gate == GateContoroller.Pasumo_OK)
             {
                 Completed();
+                //Debug.Log("↑");
             }
             else{
                 //ポコポコ怒りアニメーション
+                //Debug.Log("??");
             }
         }
         if (Input.GetKeyDown(KeyCode.Space))
@@ -78,10 +88,15 @@ public class TicketGate : MonoBehaviour
                 //正しく止めたことを人クラスに渡す（関数呼び出し）
                 timeOn = false;
                 timer = 0;
-            }else{
+                _gate = GateContoroller.Start;
+                //Debug.Log("SPACE");
+            }
+            else{
                 //間違えて止めたことを人クラスに渡す（関数呼び出し）
                 timeOn = false;
                 timer = 0;
+                _gate = GateContoroller.Start;
+                //Debug.Log("SPACE_BAD");
             }
         }
     }
@@ -95,12 +110,15 @@ public class TicketGate : MonoBehaviour
             case TicketType.paper:
             case TicketType.paper_miss:
                 _gate = GateContoroller.Ticket;
+                //Debug.Log("TICKET");
                 break;
             case TicketType.suica:
                 _gate = GateContoroller.Pasumo_OK;
+                //Debug.Log("PASUMO");
                 break;
             case TicketType.suica_miss:
                 _gate = GateContoroller.NO;
+                //Debug.Log("PASUMO_NO");
                 break;
         }
         //タイマーを開始する
@@ -115,15 +133,19 @@ public class TicketGate : MonoBehaviour
             if (_ticket == TicketType.paper)
             {
                 _gate = GateContoroller.Ticket_OK1;
+                //Debug.Log("GOOD");
             }
             if (_ticket == TicketType.paper_miss)
             {
                 _gate = GateContoroller.NO;
+                //Debug.Log("NO_GOOD");
             }
+            //Debug.Log("←");
         }
         else
         {
             //ポコポコ怒りアニメーション
+            //Debug.Log("??");
         }
     }
 
@@ -131,8 +153,10 @@ public class TicketGate : MonoBehaviour
     private void Completed()
     {
         timeOn = false;
-        //人クラスにタイムと終了したかを渡す関数呼び出し
+        Debug.Log(timer);
+        /*人クラスにタイムと終了したかを渡す関数呼び出し*/
         timer = 0;
         _gate = GateContoroller.Start;
+        //Debug.Log("END");
     }
 }
