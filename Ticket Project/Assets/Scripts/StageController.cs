@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum TicketType {
-    paper,
-    paper_miss,
-    suica,
-    suica_miss,
+    paper,//切符
+    paper_miss,//間違い切符
+    suica,//電子カード
+    suica_miss,//間違い電子カード
 }
 
 public class StageController : MonoBehaviour {
@@ -16,6 +16,21 @@ public class StageController : MonoBehaviour {
     private int nowLineNumber = 0;
     private float nowLineTime;
     private int nowLineAddCount = 0;
+    private float frustration;
+    public float Frustration { get { return frustration; } }
+    public string NowTimeName { get{ return nowLineNumber <= line.Count ? line[nowLineNumber].Name : "終業"; } }
+    private int passHumanCount = 0;
+    public int PassHumanCount { get { return passHumanCount; } }
+    private float score;
+    public float Score { get { return score; } }
+
+    /// <summary>
+    /// 合計就業時間の取得
+    /// </summary>
+    public float MaxTime { get {
+            float sum = 0;
+            foreach (HumanLine item in line) { sum += item.Time; }
+            return sum; } }
 
     private void Awake()
     {
@@ -99,5 +114,28 @@ public class StageController : MonoBehaviour {
         return Random.Range(0f, 1f) < nowStage.SuicaPer ?
             Random.Range(0f, 1f) < nowStage.MissPer ? TicketType.suica_miss : TicketType.suica :
             Random.Range(0f, 1f) < nowStage.MissPer ? TicketType.paper_miss : TicketType.paper;
+    }
+
+    /// <summary>
+    /// 不満度の加算
+    /// </summary>
+    /// <param name="value"></param>
+    public void AddFrustration(float value) {
+        frustration += value;
+    }
+
+    /// <summary>
+    /// スコアの加算
+    /// </summary>
+    /// <param name="value"></param>
+    public void AddScore(float value) {
+        score += value;
+    }
+
+    /// <summary>
+    /// 人の通過
+    /// </summary>
+    public void PassHuman() {
+        passHumanCount++;
     }
 }
