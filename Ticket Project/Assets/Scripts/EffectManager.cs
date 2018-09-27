@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EffectManager : MonoBehaviour {
+public class EffectManager : SingletonMonoBehaviour<EffectManager> {
+    public enum EffectType {
+        frustration,//不満表示
+        gateClose,//ゲートを閉める
+        gateHit,//ゲートにぶつかる
+        cutIn,//カットイン表示
+    }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void PlayEffect(EffectType value) {
+
+    }
 }
