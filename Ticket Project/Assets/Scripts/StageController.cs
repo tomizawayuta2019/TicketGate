@@ -8,6 +8,67 @@ public enum TicketType {
     suica,//電子カード
     suica_miss,//間違い電子カード
 }
+/// <summary>
+/// 人が持っている情報
+/// </summary>
+public class HumanInfo {
+    // チケットの種類-----------------------------*
+    private TicketType ticket;
+
+    /// <summary>
+    /// チケット種類獲得
+    /// </summary>
+    /// <returns></returns>
+    public TicketType GetTicket() { return ticket; }
+
+    /// <summary>
+    /// チケット種類格納
+    /// </summary>
+    /// <param name="type"></param>
+    public void SetTicket(TicketType type) { ticket = type; }
+    // -----------------------------------------*
+
+    // 通過目標時間------------------------------*
+    private float targetTime;
+
+    /// <summary>
+    /// 経過目標時間取得
+    /// </summary>
+    /// <returns></returns>
+    public float GetTargetTime() { return targetTime; }
+
+    /// <summary>
+    /// 経過目標時間格納
+    /// </summary>
+    /// <param name="time"></param>
+    public void SetTargetTime(float time) { targetTime = time; }
+    // -----------------------------------------*
+}
+
+/// <summary>
+/// 人マネージャー
+/// </summary>
+public class HumanManager : MonoBehaviour {
+    public Queue<HumanInfo> humanLines = new Queue<HumanInfo>();
+    public GameObject _humanPrefab;
+
+    /// <summary>
+    /// 人生成
+    /// </summary>
+    public void CreateHuman() {
+        _humanPrefab = Resources.Load("Prefabs/HumanPrefab") as GameObject;
+        // 人情報を配列に入れる---------------------*
+        HumanInfo info = new HumanInfo();
+        info.SetTicket(StageController.instance.GetRundTicketType());
+        info.SetTargetTime(StageController.instance.GetHumanTargetTime());
+        humanLines.Enqueue(info);
+        // ---------------------------------------*
+
+        // 生成
+        GameObject human = Instantiate(_humanPrefab);
+        human.transform.SetParent(GameObject.Find("Canvas").transform);
+    }
+}
 
 public class StageController : MonoBehaviour {
     public static StageController instance;
@@ -24,6 +85,9 @@ public class StageController : MonoBehaviour {
     private float score;
     public float Score { get { return score; } }
 
+    [HideInInspector]
+    public HumanManager hManager;
+
     /// <summary>
     /// 合計就業時間の取得
     /// </summary>
@@ -36,6 +100,7 @@ public class StageController : MonoBehaviour {
     {
         instance = this;
         line = new List<HumanLine>(nowStage.humans);
+        hManager = new HumanManager();
     }
 
     private void Update()
@@ -95,6 +160,7 @@ public class StageController : MonoBehaviour {
     /// 人を追加する処理
     /// </summary>
     private void AddHuman() {
+        hManager.CreateHuman();
         nowLineAddCount++;
     }
 
