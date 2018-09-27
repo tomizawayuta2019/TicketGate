@@ -11,4 +11,11 @@ public class TimeManager : SingletonMonoBehaviour<TimeManager> {
         timePer = value;
     }
 
+    public static void TimeStop() {
+        timePer = 0;
+    }
+
+    public static void TimeStart() {
+        timePer = 1;
+    }
 }
