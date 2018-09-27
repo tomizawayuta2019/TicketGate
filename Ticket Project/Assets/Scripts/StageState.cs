@@ -9,6 +9,7 @@ using UnityEngine;
 public struct HumanLine {
     [SerializeField]
     string name;
+    public string Name { get { return name; } }
     [SerializeField]
     [Range(0.1f, 5)]
     float addTime;//何秒ごとに人が来るか
@@ -45,6 +46,8 @@ public class StageState : ScriptableObject {
     [SerializeField]
     float missPer;//間違ったチケットの可能性
     public float MissPer { get { return missPer; } }
+
+    public int firstHour = 6, endHour = 25;//始業、終業時刻
 
     public List<HumanLine> humans = new List<HumanLine>();
 
