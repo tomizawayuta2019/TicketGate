@@ -25,6 +25,7 @@ public class TicketGate : MonoBehaviour
     private bool timeOn = false;
     private GateContoroller _gate;
     /* 人のチケット情報enum */
+    TicketType _ticket;
 
     // Use this for initialization
     void Start()
@@ -84,9 +85,23 @@ public class TicketGate : MonoBehaviour
         }
     }
 
-    public void SetTicket(/* 人クラスの持ってるチケット情報enum */){
+    public void SetTicket(TicketType type){
         //人の持っているチケット情報をこのスクリプトのenum変数に取得する
+        _ticket = type;
         //チケットの種類を見て、_gateの値を変える(switch)
+        switch (_ticket)
+        {
+            case TicketType.paper:
+            case TicketType.paper_miss:
+                _gate = GateContoroller.Ticket;
+                break;
+            case TicketType.suica:
+                _gate = GateContoroller.Pasumo_OK;
+                break;
+            case TicketType.suica_miss:
+                _gate = GateContoroller.NO;
+                break;
+        }
         //タイマーを開始する
         timeOn = true;
     }
@@ -96,7 +111,14 @@ public class TicketGate : MonoBehaviour
         if (_gate == GateContoroller.Ticket)
         {
             //切符が間違っているかどうかを取得(間違ってたらNO,あってたらTicket_OK1)
-            _gate = GateContoroller.Ticket_OK1;
+            if (_ticket == TicketType.paper)
+            {
+                _gate = GateContoroller.Ticket_OK1;
+            }
+            if (_ticket == TicketType.paper_miss)
+            {
+                _gate = GateContoroller.NO;
+            }
         }
         else
         {
