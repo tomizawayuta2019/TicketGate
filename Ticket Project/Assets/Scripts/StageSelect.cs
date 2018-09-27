@@ -18,7 +18,7 @@ public class StageSelect : MonoBehaviour {
             score_text[i].text = stage_num[i].MaxScore.ToString();
         }
         //ステージのクリア情報
-        for (int i = 0; i < stage_num.Length; i++) {
+        for (int i = 0; i < stage_num.Length-1; i++) {
             if (stage_num[i].IsClear == false){
                 stage_button[i].interactable = false;
             }else{
