@@ -65,7 +65,7 @@ public class StageController : MonoBehaviour {
         nowLineNumber++;
         nowLineAddCount = 0;
         if (nowLineNumber == line.Count) {
-
+            HumanLineEnd();
         }
     }
 
