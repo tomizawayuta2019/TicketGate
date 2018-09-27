@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TicketGate : MonoBehaviour
 {
+    //testする！！！！
 
     private enum GateContoroller
     {
