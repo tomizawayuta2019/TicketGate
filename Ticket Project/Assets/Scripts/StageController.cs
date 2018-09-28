@@ -110,8 +110,10 @@ public class HumanManager : MonoBehaviour {
         
         // 人情報を配列に入れる---------------------*
         HumanInfo info = human.AddComponent<HumanInfo>();
-        
-        info.SetTicket(StageController.instance.GetRundTicketType());
+
+        TicketType ticketType = StageController.instance.GetRundTicketType();
+        hMove.SetTicketType(ticketType);
+        info.SetTicket(ticketType);
         info.SetTargetTime(StageController.instance.GetHumanTargetTime());
         humanLines.Enqueue(info);
         // -----------------------------------------*
@@ -384,12 +386,14 @@ public class StageController : MonoBehaviour {
     }
 
     private IEnumerator WaitHuman() {
-        while (HumanManager.instance.humanLines.Count > 0) { yield return null; }
+        while (HumanManager.instance.humanLines.Count > 0 || HumanManager.instance.GateInHuman) { yield return null; }
         GameClear();
     }
 
     private void GameClear() {
         Debug.Log("Game Clear!!!");
+        nowStage.SetMaxScore(Score);
+        nowStage.SetClear();
         GameResult.instance.FinishGame();
     }
 
@@ -423,12 +427,19 @@ public class StageController : MonoBehaviour {
             Random.Range(0f, 1f) < nowStage.MissPer ? TicketType.paper_miss : TicketType.paper;
     }
 
+    private float oldSpeed;
     /// <summary>
     /// 人の動く速度を取得する処理（時間ごとにある程度ランダム）
     /// </summary>
     /// <returns></returns>
     public float GetHumanMoveSpeed() {
-        return line[nowLineNumber].MoveSpeed + Random.Range(-line[nowLineNumber].RandomRange, line[nowLineNumber].RandomRange);
+        if (line.Count > nowLineNumber)
+        {
+            return oldSpeed = line[nowLineNumber].MoveSpeed + Random.Range(-line[nowLineNumber].RandomRange, line[nowLineNumber].RandomRange);
+        }
+        else {
+            return oldSpeed;
+        }
     }
 
     /// <summary>

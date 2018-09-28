@@ -10,7 +10,8 @@ public class HumanMove : MonoBehaviour {
     Vector2? waitingPos = null;
     [SerializeField]
     private float moveSpeed;
-    private const float outScreenDistance = 200;//改札から出てどれくらいまで歩くか
+    public float MoveSpeed { get { return StageController.instance.GetHumanMoveSpeed(); } }
+    private const float outScreenDistance = 400;//改札から出てどれくらいまで歩くか
     private Coroutine move;
     RectTransform rect;
     RectTransform targetHumanRect;//前を歩いている人のRect
@@ -18,6 +19,8 @@ public class HumanMove : MonoBehaviour {
     public bool isGateStart = false;
 
     public static RectTransform defRect;//直前に生成されたHumanのRect
+    Vector2 ticketPos = new Vector2(0, 300);
+    public GameObject suica, ticket;
 
     public void Awake()
     {
@@ -47,6 +50,26 @@ public class HumanMove : MonoBehaviour {
         this.startPos = startPos;
         this.endPos = endPos;
         this.moveSpeed = moveSpeed;
+    }
+
+    public void SetTicketType(TicketType ticketType) {
+        switch (ticketType) {
+            case TicketType.paper:
+                ticket = Instantiate(Resources.Load("Prefabs/smallTicket"))as GameObject;
+                ticket.transform.SetParent(transform);
+                ticket.GetComponent<RectTransform>().localPosition = ticketPos;
+                break;
+            case TicketType.paper_miss:
+                ticket = Instantiate(Resources.Load("Prefabs/smallTicket_red")) as GameObject;
+                ticket.transform.SetParent(transform);
+                ticket.GetComponent<RectTransform>().localPosition = ticketPos;
+                break;
+            default:
+                suica = Instantiate(Resources.Load("Prefabs/smallsuica")) as GameObject;
+                suica.transform.SetParent(transform);
+                suica.GetComponent<RectTransform>().localPosition = ticketPos;
+                break;
+        }
     }
 
     public void SetSprite(Sprite walk,Sprite pass) {
@@ -88,6 +111,7 @@ public class HumanMove : MonoBehaviour {
     public void GotoEndPos(System.Action comp) {
         MoveStop();
         ChangeSprite(walk);
+        if (ticket) { ticket.SetActive(false); }
         move = StartCoroutine(Move(endPos, comp));
     }
 
@@ -96,6 +120,7 @@ public class HumanMove : MonoBehaviour {
     /// </summary>
     public void GotoOutScreen() {
         MoveStop();
+        if (ticket) { ticket.SetActive(true); }
         move = StartCoroutine(Move(endPos + new Vector2(outScreenDistance, 0), () => Destroy(gameObject)));
     }
 
@@ -123,7 +148,7 @@ public class HumanMove : MonoBehaviour {
 
         do {
             yield return null;
-            rect.localPosition = (Vector2)rect.localPosition + new Vector2(moveSpeed * Time.deltaTime, 0);
+            rect.localPosition = (Vector2)rect.localPosition + new Vector2(MoveSpeed * Time.deltaTime, 0);
             if (GetTargetHumanWaitingPoss().x <= rect.localPosition.x)
             {
                 rect.localPosition = new Vector2(GetTargetHumanWaitingPoss().x, rect.localPosition.y);

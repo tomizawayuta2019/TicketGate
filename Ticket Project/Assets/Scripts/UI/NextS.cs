@@ -7,6 +7,7 @@ public class NextS : MonoBehaviour {
     public void OnClick()
     {
         // nextstageへ移行
-        SceneManager.LoadScene("Main");
+        //SceneManager.LoadScene("Main");
+        Fade.instance.FadeStart("Main");
     }
 }

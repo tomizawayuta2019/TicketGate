@@ -7,6 +7,7 @@ public class UI_StageSelectButton : MonoBehaviour {
 
     public void OnClick(string sceneName)
     {
-        SceneManager.LoadScene(sceneName); //ステージセレクトへ移動
+        //SceneManager.LoadScene(sceneName); //ステージセレクトへ移動
+        Fade.instance.FadeStart(sceneName);
     }
 }

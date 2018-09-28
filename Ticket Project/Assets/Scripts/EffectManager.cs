@@ -11,6 +11,11 @@ public class EffectManager : SingletonMonoBehaviour<EffectManager> {
     public List<GameObject> effectPrefabs = new List<GameObject>();
     [SerializeField]
     GameObject canvas;
+    GameObject Canvas { get {
+            if (canvas) return canvas;
+            else canvas = GameObject.Find("UICanvas");
+            return canvas;
+        } }
 
 
     protected override void Awake()
@@ -20,12 +25,11 @@ public class EffectManager : SingletonMonoBehaviour<EffectManager> {
             return;
         }
         base.Awake();
-        if (canvas == null) { canvas = GameObject.Find("UICanvas"); }
     }
 
     public GameObject PlayEffect(EffectType value,Vector3 position) {
         GameObject effect = Instantiate(effectPrefabs[(int)value]);
-        effect.transform.SetParent(canvas.transform);
+        effect.transform.SetParent(Canvas.transform);
         effect.GetComponent<RectTransform>().localPosition = position;
         effect.GetComponent<RectTransform>().localScale = effectPrefabs[(int)value].GetComponent<RectTransform>().localScale;
         effect.AddComponent<EffectDest>();

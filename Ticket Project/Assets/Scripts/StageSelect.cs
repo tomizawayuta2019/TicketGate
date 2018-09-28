@@ -24,7 +24,7 @@ public class StageSelect : MonoBehaviour {
         for (int i = 0; i < stage_num.Length; i++)
         {
             stage_text[i].text = stage_num[i].StageName;
-            score_text[i].text = stage_num[i].MaxScore.ToString();
+            score_text[i].text = ((int)stage_num[i].MaxScore).ToString();
         }
 
         //ステージのクリア情報
