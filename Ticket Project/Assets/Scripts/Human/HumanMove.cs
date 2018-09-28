@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HumanMove : MonoBehaviour {
 
-    private Vector2 startPos, endPos;
+    private Vector2 startPos, endPos, waitingPos;
     [SerializeField]
     private float moveSpeed;
     private const float outScreenDistance = 10;//改札から出てどれくらいまで歩くか
@@ -30,6 +30,10 @@ public class HumanMove : MonoBehaviour {
         this.startPos = startPos;
         this.endPos = endPos;
         this.moveSpeed = moveSpeed;
+    }
+
+    public void SetWaitingPos(Vector2 waitingPos) {
+        this.waitingPos = waitingPos;
     }
 
     /// <summary>
@@ -84,11 +88,14 @@ public class HumanMove : MonoBehaviour {
 
         do {
             yield return null;
+            if (waitingPos.x <= rect.localPosition.x) {
+                rect.localPosition = waitingPos;
+                continue;
+            }
             rect.localPosition = (Vector2)rect.localPosition + new Vector2(moveSpeed * Time.deltaTime, 0);
         } while (rect.localPosition.x < targetPos.x);
 
         rect.localPosition = targetPos;
-        Debug.Log("move comp" + name + targetPos);
 
         //transform.position = targetPos;
         if (comp != null) { comp(); }
