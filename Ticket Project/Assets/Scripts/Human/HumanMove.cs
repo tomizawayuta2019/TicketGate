@@ -9,6 +9,7 @@ public class HumanMove : MonoBehaviour {
     private float moveSpeed;
     private const float outScreenDistance = 10;//改札から出てどれくらいまで歩くか
     private Coroutine move;
+    RectTransform rect;
 
     //デバッグ用
     //private void Awake()
@@ -24,7 +25,8 @@ public class HumanMove : MonoBehaviour {
     /// <param name="endPos">改札の出口（チケット取るとこ）</param>
     /// <param name="moveSpeed">移動速度</param>
     public void Init(Vector2 initPos,Vector2 startPos,Vector2 endPos,float moveSpeed) {
-        transform.position = initPos;
+        rect = GetComponent<RectTransform>();
+        rect.localPosition = initPos;
         this.startPos = startPos;
         this.endPos = endPos;
         this.moveSpeed = moveSpeed;
@@ -82,10 +84,13 @@ public class HumanMove : MonoBehaviour {
 
         do {
             yield return null;
-            transform.position = (Vector2)transform.position + new Vector2(moveSpeed * Time.deltaTime, 0);
-        } while (transform.position.x < targetPos.x);
+            rect.localPosition = (Vector2)rect.localPosition + new Vector2(moveSpeed * Time.deltaTime, 0);
+        } while (rect.localPosition.x < targetPos.x);
 
-        transform.position = targetPos;
+        rect.localPosition = targetPos;
+        Debug.Log("move comp" + name + targetPos);
+
+        //transform.position = targetPos;
         if (comp != null) { comp(); }
     }
 }

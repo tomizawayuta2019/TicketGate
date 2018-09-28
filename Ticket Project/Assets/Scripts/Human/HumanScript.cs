@@ -46,6 +46,7 @@ using UnityEngine.UI;
 /// </summary>
 public class HumanScript : MonoBehaviour
 {
+    private HumanInfo topInfo;
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Space)){
@@ -76,11 +77,10 @@ public class HumanScript : MonoBehaviour
     /// </summary>
     public void TicketIn()
     {
-        HumanInfo topInfo;
+        // 先頭の情報を取得
+        //HumanInfo topInfo;
         topInfo = StageController.instance.hManager.humanLines.Dequeue();
-        
-
-        Debug.Log("Target0:" + StageController.instance.hManager.humanLines.Dequeue());
+        Debug.Log(topInfo);
     }
 
     /// <summary>
@@ -90,6 +90,14 @@ public class HumanScript : MonoBehaviour
     /// <param name="check"></param>
     public void ActionComplate(float finishTime,bool check)
     {
+        float topTargetTime = topInfo.GetTargetTime();
+        float addFrus;
 
+        if (finishTime > topTargetTime) addFrus = finishTime - topTargetTime;
+        else addFrus = topTargetTime - finishTime;
+
+        StageController.instance.PassHuman();
+        StageController.instance.AddFrustration(addFrus);
+        
     }
 }

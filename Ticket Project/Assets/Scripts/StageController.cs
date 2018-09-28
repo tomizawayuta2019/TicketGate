@@ -12,7 +12,7 @@ public enum TicketType {
 /// 人が持っている情報
 /// </summary>
 public class HumanInfo : MonoBehaviour {
-    // チケットの種類-----------------------------*
+    // チケットの種類------------------------------------------------------------*
     private TicketType ticket;
 
     /// <summary>
@@ -26,9 +26,9 @@ public class HumanInfo : MonoBehaviour {
     /// </summary>
     /// <param name="type"></param>
     public void SetTicket(TicketType type) { ticket = type; }
-    // -----------------------------------------*
+    // --------------------------------------------------------------------------*
 
-    // 通過目標時間------------------------------*
+    // 通過目標時間--------------------------------------------------------------*
     private float targetTime;
 
     /// <summary>
@@ -42,7 +42,7 @@ public class HumanInfo : MonoBehaviour {
     /// </summary>
     /// <param name="time"></param>
     public void SetTargetTime(float time) { targetTime = time; }
-    // -----------------------------------------*
+    // --------------------------------------------------------------------------*
 }
 
 /// <summary>
@@ -51,34 +51,51 @@ public class HumanInfo : MonoBehaviour {
 public class HumanManager : MonoBehaviour {
     public Queue<HumanInfo> humanLines = new Queue<HumanInfo>();
     private GameObject _humanPrefab;
-    private Vector3 startPos;
+
+    // 移動に必要な変数--------*
+    private Vector2 createPos;
+    private Vector2 startPos;
+    private Vector2 endPos;
+    private float moveSpeed;
+    // ------------------------*
 
     /// <summary>
     /// 人生成
     /// </summary>
     public void CreateHuman() {
-        // 生成--------------------------------*
         _humanPrefab = Resources.Load("Prefabs/HumanPrefab") as GameObject;
-        startPos = GameObject.Find("Canvas/StartPos").GetComponent<Transform>().transform.position;
+        createPos = GameObject.Find("Canvas/CreatePos").GetComponent<RectTransform>().localPosition;
+        startPos = GameObject.Find("Canvas/StartPos").GetComponent<RectTransform>().localPosition;
+        endPos = GameObject.Find("Canvas/EndPos").GetComponent<RectTransform>().localPosition;
 
+        moveSpeed = StageController.instance.GetHumanMoveSpeed();
+
+        // 生成--------------------------------*
         GameObject human = Instantiate(_humanPrefab);
         human.transform.SetParent(GameObject.Find("Canvas").transform);
+
+        //human.transform.position = new Vector2(createPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, createPos.y);
+
+        startPos = new Vector2(startPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, startPos.y);
+        Debug.Log("startPos" + startPos);
+        createPos = new Vector2(createPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, createPos.y);
+
+        HumanMove hMove = human.AddComponent<HumanMove>();
+        hMove.Init(createPos, startPos, endPos, moveSpeed);
         // ------------------------------------*
 
-        // 列に並ばせる
-        human.transform.position = new Vector2(startPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, startPos.y);
-
+        // StartPosに移動
+        hMove.GotoStartPoss(() => { Debug.Log("Complate");});
+        
         // 人情報を配列に入れる---------------------*
         HumanInfo info = human.AddComponent<HumanInfo>();
 
         info.SetTicket(StageController.instance.GetRundTicketType());
         info.SetTargetTime(StageController.instance.GetHumanTargetTime());
+        Debug.Log("TotalBefore:" + humanLines.Count);
         humanLines.Enqueue(info);
-        Debug.Log("Total:" + humanLines.Count);
+        Debug.Log("TotalAfter:" + humanLines.Count);
         // -----------------------------------------*
-
-        //Debug.Log(human.GetComponent<HumanInfo>().GetTicket());
-        //Debug.Log(info.gameObject);
     }
 }
 
