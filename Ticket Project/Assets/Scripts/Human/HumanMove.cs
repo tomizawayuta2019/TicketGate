@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class HumanMove : MonoBehaviour {
 
-    private Vector2 startPos, endPos, waitingPos;
+    private Vector2 startPos, endPos;
+    Vector2? waitingPos = null;
     [SerializeField]
     private float moveSpeed;
     private const float outScreenDistance = 10;//改札から出てどれくらいまで歩くか
@@ -18,6 +19,9 @@ public class HumanMove : MonoBehaviour {
     {
         targetHumanRect = defRect;
         defRect = GetComponent<RectTransform>();
+        if (!waitingPos.HasValue) {
+            waitingPos = new Vector2(Mathf.Infinity, GetComponent<RectTransform>().localPosition.y);
+        }
     }
 
     //デバッグ用
@@ -98,7 +102,7 @@ public class HumanMove : MonoBehaviour {
         do {
             yield return null;
             if (GetTargetHumanWaitingPoss().x <= rect.localPosition.x) {
-                rect.localPosition = GetTargetHumanWaitingPoss();
+                rect.localPosition = new Vector2(GetTargetHumanWaitingPoss().x, rect.localPosition.y);
                 continue;
             }
             if (waitingPos.x <= rect.localPosition.x) {
