@@ -19,8 +19,11 @@ public struct HumanLine {
     float targetTime;//目標時間
     public float TargetTime { get { return targetTime; } }
     [SerializeField]
-    float time;
+    float time;//終了までの時間
     public float Time { get { return time; } }
+    [SerializeField]
+    float speed;//移動速度
+    public float Speed { get { return speed; } }
 }
 
 [CreateAssetMenu]
@@ -47,16 +50,33 @@ public class StageState : ScriptableObject {
     float missPer;//間違ったチケットの可能性
     public float MissPer { get { return missPer; } }
 
-    public int firstHour = 6, endHour = 25;//始業、終業時刻
+    private int startHour = 6, endHour = 25;//始業、終業時刻
+    public int StartHour { get { return startHour; } }
+    public int EndHour { get { return endHour; } }
 
     public List<HumanLine> humans = new List<HumanLine>();
 
+    private string IsClearKey { get{ return "Stage" + StageID + "IsClear"; } }
+    private string MaxScoreKey { get { return "Stage" + StageID + "MaxScore"; } }
+
+    private void Awake()
+    {
+        //各種情報をロードする
+        isClear = PlayerPrefs.GetInt(IsClearKey, 0) == 1;
+        maxScore = PlayerPrefs.GetFloat(MaxScoreKey, 0);
+    }
 
     public void SetMaxScore(float value) {
-        if (value > maxScore) { maxScore = value; }
+        if (value <= MaxScore) { return; }
+        maxScore = value;
+        PlayerPrefs.SetFloat(MaxScoreKey, MaxScore);
+        PlayerPrefs.Save();
     }
 
     public void SetClear() {
-        if (!isClear) { isClear = true; }
+        if (IsClear) { return; }
+        isClear = true;
+        PlayerPrefs.SetInt(IsClearKey, IsClear ? 1 : 0);
+        PlayerPrefs.Save();
     }
 }
