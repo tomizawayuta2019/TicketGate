@@ -285,7 +285,7 @@ public class TicketGate : MonoBehaviour
     }
 
     private IEnumerator LampPreview(bool check) {
-        Debug.Log("lamp");
+        //Debug.Log("lamp");
         GameObject prefab = Resources.Load(check ? "Prefabs/Lamp_Green" : "Prefabs/Lamp_Red") as GameObject;
         GameObject lamp = Instantiate(prefab);
         lamp.transform.SetParent(canvas.transform);

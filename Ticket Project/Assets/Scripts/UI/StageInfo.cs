@@ -22,7 +22,9 @@ public class StageInfo : MonoBehaviour {
     [SerializeField]
     private Image second_spr;
     private float num;
-    private float time; 
+    private float time;
+
+    public Text text;
     
 	void Start () {
         second_spr.sprite = secondnumber[0];
@@ -33,7 +35,8 @@ public class StageInfo : MonoBehaviour {
         //min_hour = 5;
         //max_hour = 23;
 
-        num = 180.0f / (max_hour - min_hour);
+        //num = 180.0f / (max_hour - min_hour);
+        num = _controller.MaxTime / (max_hour - min_hour);
         ///時間が１進むのに必要な秒数を求める
         now_hour_first = now_hour = min_hour;
         first_spr.sprite = firstnumber[now_hour];
