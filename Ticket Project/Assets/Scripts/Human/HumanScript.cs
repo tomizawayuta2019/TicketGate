@@ -46,23 +46,14 @@ using UnityEngine.UI;
 /// </summary>
 public class HumanScript : MonoBehaviour
 {
-    [SerializeField,Header("Canvas")]
-    private Canvas canvas;
-
-    // 待機列
-    //private Queue<HumanInfo> humanLines = new Queue<HumanInfo>();
-
-    [SerializeField,Header("人間Prefab")]
-    private GameObject _humanPrefab;
-
-    void Awake() {
-        
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Space)){
+            TicketIn();
+            Debug.Log(StageController.instance.hManager.humanLines.Count);
+            
+        }
     }
-
-    void Start() {
-        
-    }
-
     /// <summary>
     /// 人生成
     /// </summary>
@@ -85,7 +76,11 @@ public class HumanScript : MonoBehaviour
     /// </summary>
     public void TicketIn()
     {
-        Debug.Log("Target0:" + StageController.instance.hManager.humanLines.Dequeue().GetTargetTime());
+        HumanInfo topInfo;
+        topInfo = StageController.instance.hManager.humanLines.Dequeue();
+        
+
+        Debug.Log("Target0:" + StageController.instance.hManager.humanLines.Dequeue());
     }
 
     /// <summary>

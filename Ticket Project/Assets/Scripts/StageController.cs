@@ -11,7 +11,7 @@ public enum TicketType {
 /// <summary>
 /// 人が持っている情報
 /// </summary>
-public class HumanInfo {
+public class HumanInfo : MonoBehaviour {
     // チケットの種類-----------------------------*
     private TicketType ticket;
 
@@ -50,23 +50,35 @@ public class HumanInfo {
 /// </summary>
 public class HumanManager : MonoBehaviour {
     public Queue<HumanInfo> humanLines = new Queue<HumanInfo>();
-    public GameObject _humanPrefab;
+    private GameObject _humanPrefab;
+    private Vector3 startPos;
 
     /// <summary>
     /// 人生成
     /// </summary>
     public void CreateHuman() {
+        // 生成--------------------------------*
         _humanPrefab = Resources.Load("Prefabs/HumanPrefab") as GameObject;
+        startPos = GameObject.Find("Canvas/StartPos").GetComponent<Transform>().transform.position;
+
+        GameObject human = Instantiate(_humanPrefab);
+        human.transform.SetParent(GameObject.Find("Canvas").transform);
+        // ------------------------------------*
+
+        // 列に並ばせる
+        human.transform.position = new Vector2(startPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, startPos.y);
+
         // 人情報を配列に入れる---------------------*
-        HumanInfo info = new HumanInfo();
+        HumanInfo info = human.AddComponent<HumanInfo>();
+
         info.SetTicket(StageController.instance.GetRundTicketType());
         info.SetTargetTime(StageController.instance.GetHumanTargetTime());
         humanLines.Enqueue(info);
-        // ---------------------------------------*
+        Debug.Log("Total:" + humanLines.Count);
+        // -----------------------------------------*
 
-        // 生成
-        GameObject human = Instantiate(_humanPrefab);
-        human.transform.SetParent(GameObject.Find("Canvas").transform);
+        //Debug.Log(human.GetComponent<HumanInfo>().GetTicket());
+        //Debug.Log(info.gameObject);
     }
 }
 
