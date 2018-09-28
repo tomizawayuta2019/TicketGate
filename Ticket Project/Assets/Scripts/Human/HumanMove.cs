@@ -8,7 +8,7 @@ public class HumanMove : MonoBehaviour {
     Vector2? waitingPos = null;
     [SerializeField]
     private float moveSpeed;
-    private const float outScreenDistance = 10;//改札から出てどれくらいまで歩くか
+    private const float outScreenDistance = 200;//改札から出てどれくらいまで歩くか
     private Coroutine move;
     RectTransform rect;
     RectTransform targetHumanRect;//前を歩いている人のRect
@@ -71,6 +71,7 @@ public class HumanMove : MonoBehaviour {
     /// GotoStartPoss(() => { 何かの処理 })　でも呼べます。複数行も可。
     /// </param>
     public void GotoEndPos(System.Action comp) {
+        Debug.Log("GotoEnd");
         MoveStop();
         move = StartCoroutine(Move(endPos, comp));
     }
@@ -81,6 +82,12 @@ public class HumanMove : MonoBehaviour {
     public void GotoOutScreen() {
         MoveStop();
         move = StartCoroutine(Move(endPos + new Vector2(outScreenDistance, 0), () => Destroy(gameObject)));
+    }
+
+    public void ReturnToGate() {
+        //MoveStop();
+        //move = StartCoroutine(Move(-endPos - new Vector2(outScreenDistance, 0), () => Destroy(gameObject)));
+        Destroy(gameObject);
     }
 
     /// <summary>

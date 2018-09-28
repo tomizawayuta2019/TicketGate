@@ -52,6 +52,8 @@ public class HumanManager : MonoBehaviour {
     public Queue<HumanInfo> humanLines = new Queue<HumanInfo>();
     private GameObject _humanPrefab;
     private GameObject firstHuman;
+    public static HumanManager instance;
+    private int humanCount = 0;
     
 
     // 移動に必要な変数--------*
@@ -60,13 +62,22 @@ public class HumanManager : MonoBehaviour {
     private Vector2 endPos;
     private Vector2 waitingPos;
     private float moveSpeed;
+    [SerializeField]
+    private bool isMoveNow;
+    public bool IsMoceNow { get { return isMoveNow; } }
     // ------------------------*
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     /// <summary>
     /// 人生成
     /// </summary>
     public void CreateHuman() {
         _humanPrefab = Resources.Load("Prefabs/HumanPrefab") as GameObject;
+        _humanPrefab.name = (humanCount++).ToString();
         createPos = GameObject.Find("Canvas/CreatePos").GetComponent<RectTransform>().localPosition;
         startPos = GameObject.Find("Canvas/StartPos").GetComponent<RectTransform>().localPosition;
         endPos = GameObject.Find("Canvas/EndPos").GetComponent<RectTransform>().localPosition;
@@ -106,12 +117,25 @@ public class HumanManager : MonoBehaviour {
     /// </summary>
     public void StartPosComplate()
     {
-        Debug.Log("StartComplete");
-        HumanInfo firstInfo = humanLines.Peek();
-        firstHuman = firstInfo.gameObject;
-        //firstInfo.GetComponent<HumanMove>().SetWaitingPos(new Vector2(Mathf.Infinity, startPos.y));
-        firstInfo.GetComponent<HumanMove>().GotoEndPos(() => EndPosComplate());
+        StartCoroutine(TicketGate.instance.WaitStartTiming(() =>
+        {
+            TicketIn();
 
+            Debug.Log("StartComplete");
+
+            GateIn();
+        }));
+    }
+
+    private void GateIn() {
+        StartCoroutine(TicketGate.instance.WaitTicketTiming(() =>
+        {
+            HumanInfo firstInfo = humanLines.Peek();
+            firstHuman = firstInfo.gameObject;
+            //firstInfo.GetComponent<HumanMove>().GotoEndPos(() => EndPosComplate());
+            firstInfo.GetComponent<HumanMove>().GotoEndPos(() => { });
+            isMoveNow = true;
+        }));
     }
 
     /// <summary>
@@ -122,6 +146,7 @@ public class HumanManager : MonoBehaviour {
         Debug.Log("EndComplete");
 
         humanLines.Peek().GetComponent<HumanMove>().GotoOutScreen();
+        isMoveNow = false;
 
         //Dequeue
         HumanInfo breakInfo = humanLines.Dequeue();
@@ -135,24 +160,6 @@ public class HumanManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// 人通行後の不満度加減処理
-    /// </summary>
-    /// <param name="finishTime"></param>
-    /// <param name="check"></param>
-    public void ActionComplate(float finishTime, bool check)
-    {
-        HumanInfo firstInfo = humanLines.Peek();
-        float firstTargetTime = firstInfo.GetTargetTime();
-        float addFrus;
-
-        if (finishTime > firstTargetTime) addFrus = finishTime - firstTargetTime;
-        else addFrus = firstTargetTime - finishTime;
-
-        StageController.instance.PassHuman();
-        StageController.instance.AddFrustration(addFrus);
-    }
-
-    /// <summary>
     /// チケットを入れた時の処理
     /// </summary>
     public void TicketIn()
@@ -160,16 +167,60 @@ public class HumanManager : MonoBehaviour {
         // チケットの種類
         TicketType type;
 
-        // 
-        float targetTime;
+        // 目標通過時間
+        //float targetTime;
+
         // 先頭の情報を取得
         HumanInfo firstInfo = humanLines.Peek();
 
         // 情報格納
         type = firstInfo.GetTicket();
-        targetTime = firstInfo.GetTargetTime();
+
+        //targetTime = firstInfo.GetTargetTime();
+
+        TicketGate.instance.SetTicket(type);
+
         Debug.Log(firstInfo);
     }
+
+    /// <summary>
+    /// 人通行後の不満度加減処理
+    /// </summary>
+    /// <param name="finishTime"></param>
+    /// <param name="check"></param>
+    public void ActionComplete(float finishTime)
+    {
+        HumanInfo firstInfo = humanLines.Peek();
+        float firstTargetTime = firstInfo.GetTargetTime();
+        float addScore = 10f;
+        float addFrus = 0;
+
+        // 経過＞目標
+        if (finishTime > firstTargetTime)
+        {
+            addFrus += finishTime - firstTargetTime;
+        }
+        // 経過＜目標
+        else
+        {
+            addScore += firstTargetTime - finishTime;
+        }
+
+        StageController.instance.PassHuman();
+        StageController.instance.AddScore(addScore);
+        StageController.instance.AddFrustration(addFrus);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="check">ゲートを閉じたことが間違いか否か</param>
+    public void GateClose(bool check){
+        HumanMove humanMove = humanLines.Dequeue().GetComponent<HumanMove>();
+        humanMove.ReturnToGate();
+        isMoveNow = false;
+    }
+
 }
 
 public class StageController : MonoBehaviour {
@@ -179,11 +230,13 @@ public class StageController : MonoBehaviour {
     private int nowLineNumber = 0;
     private float nowLineTime;
     private int nowLineAddCount = 0;
+    [SerializeField]
     private float frustration;
     public float Frustration { get { return frustration; } }
     public string NowTimeName { get{ return nowLineNumber <= line.Count ? line[nowLineNumber].Name : "終業"; } }
     private int passHumanCount = 0;
     public int PassHumanCount { get { return passHumanCount; } }
+    [SerializeField]
     private float score;
     public float Score { get { return score; } }
 
@@ -202,7 +255,7 @@ public class StageController : MonoBehaviour {
     {
         instance = this;
         line = new List<HumanLine>(nowStage.humans);
-        hManager = new HumanManager();
+        hManager = gameObject.AddComponent<HumanManager>();
     }
 
     private void Update()
