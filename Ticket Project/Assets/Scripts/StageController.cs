@@ -243,6 +243,7 @@ public class HumanManager : MonoBehaviour {
 
 public class StageController : MonoBehaviour {
     public static StageController instance;
+    public static StageState nextStage;
     public StageState nowStage;
     private List<HumanLine> line = new List<HumanLine>();
     private int nowLineNumber = 0;
@@ -269,11 +270,23 @@ public class StageController : MonoBehaviour {
             foreach (HumanLine item in line) { sum += item.Time; }
             return sum; } }
 
+    public static void SetStage(StageState state) {
+        nextStage = state;
+    }
+
+    public StageState GetStage() {
+        if (!nextStage) { return nowStage; }
+        StageState res = nextStage;
+        nextStage = null;
+        return res;
+    }
+
     private void Awake()
     {
         instance = this;
         line = new List<HumanLine>(nowStage.humans);
         hManager = gameObject.AddComponent<HumanManager>();
+        nowStage = GetStage();
     }
 
     private void Update()
