@@ -221,6 +221,7 @@ public class TicketGate : MonoBehaviour
         timer = 0;
         _gate = GateContoroller.Start;
         EffectManager.instance.PlayEffect(EffectManager.EffectType.cutIn, Vector3.zero);
+        SoundManager.instance.PlaySE(SoundManager.SoundType.Stop);
         //HumanManager.instance.EndPosComplate();
     }
 
