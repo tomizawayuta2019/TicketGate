@@ -30,6 +30,8 @@ public class TicketGate : MonoBehaviour
 
     public GameObject staff;
     private Animator staffAnim;
+    [SerializeField]
+    Canvas canvas;
 
     public static TicketGate instance;
 
@@ -118,6 +120,7 @@ public class TicketGate : MonoBehaviour
             case TicketType.paper:
             case TicketType.paper_miss:
                 _gate = GateContoroller.Ticket;
+                StartCoroutine(TicketPreview(true));
                 //Debug.Log("TICKET");
                 break;
             case TicketType.suica:
@@ -247,5 +250,33 @@ public class TicketGate : MonoBehaviour
         }
 
         action();
+    }
+
+    private Vector2 defPos = new Vector2(0, -900);
+    public IEnumerator TicketPreview(bool check) {
+        GameObject prefab = Resources.Load("Prefabs/BigTicket") as GameObject;
+        GameObject ticket = Instantiate(prefab)as GameObject;
+        ticket.transform.SetParent(canvas.transform);
+        RectTransform rect = ticket.GetComponent<RectTransform>();
+        Vector2 targetPos = prefab.GetComponent<RectTransform>().localPosition;
+        rect.localPosition = new Vector2(targetPos.x, defPos.y);
+
+
+        while ((_gate == GateContoroller.Ticket || _gate == GateContoroller.Ticket_OK1 || _gate == GateContoroller.Ticket_OK2) && rect.localPosition.y < targetPos.y) {
+            yield return null;
+            rect.localPosition = (Vector2)rect.localPosition + (new Vector2(0, 2000) * Time.deltaTime);
+        }
+
+        //rect.localPosition = targetPos;
+        while (_gate == GateContoroller.Ticket) { yield return null; }
+        while (_gate == GateContoroller.Ticket_OK1) { yield return null; }
+        while (_gate == GateContoroller.Ticket_OK2) { yield return null; }
+
+        while (rect.localPosition.y > defPos.y) {
+            yield return null;
+            rect.localPosition = (Vector2)rect.localPosition - (new Vector2(0, 2000) * Time.deltaTime);
+        }
+
+        Destroy(ticket);
     }
 }
