@@ -105,8 +105,8 @@ public class HumanMove : MonoBehaviour {
                 rect.localPosition = new Vector2(GetTargetHumanWaitingPoss().x, rect.localPosition.y);
                 continue;
             }
-            if (waitingPos.x <= rect.localPosition.x) {
-                rect.localPosition = waitingPos;
+            if (waitingPos.HasValue && waitingPos.Value.x <= rect.localPosition.x) {
+                rect.localPosition = waitingPos.Value;
                 continue;
             }
             rect.localPosition = (Vector2)rect.localPosition + new Vector2(moveSpeed * Time.deltaTime, 0);
