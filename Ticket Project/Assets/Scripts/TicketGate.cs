@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class TicketGate : MonoBehaviour
 {
-    //testする！！！！
 
     private enum GateContoroller
     {
@@ -25,15 +24,44 @@ public class TicketGate : MonoBehaviour
     private float timer;
     private bool timeOn = false;
     private GateContoroller _gate;
-    /* 人のチケット情報enum */
-    TicketType _ticket;
+    //人のチケット情報enum
+    private TicketType _ticket;
+
+    public GameObject staff;
+    private Animator staffAnim;
 
     // Use this for initialization
     void Start()
     {
+        staffAnim = staff.GetComponent<Animator>();
         timeOn = false;
         timer = 0;
-        SetTicket(TicketType.paper);
+        // test用 inspectorで呼び出す
+        setTest();
+    }
+
+    /// <summary>
+    /// test用
+    /// </summary>
+    [ContextMenu("start")]
+    private void setTest()
+    {
+        int rand = Random.Range(1, 4);
+        switch (rand)
+        {
+            case 1:
+                SetTicket(TicketType.paper);
+                break;
+            case 2:
+                SetTicket(TicketType.paper_miss);
+                break;
+            case 3:
+                SetTicket(TicketType.suica);
+                break;
+            case 4:
+                SetTicket(TicketType.suica_miss);
+                break;
+        }
     }
 
     // Update is called once per frame
@@ -44,63 +72,34 @@ public class TicketGate : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            TicketSort();
+            TicketChoice(GateContoroller.Ticket);
         }
+
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            if (_gate == GateContoroller.Ticket_OK1) {
-                _gate = GateContoroller.Ticket_OK2;
-                //Debug.Log("↓");
-            }
-            else{
-                //ポコポコ怒りアニメーション
-                //Debug.Log("??");
-            }
+            TicketChoice(GateContoroller.Ticket_OK1);
         }
+
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (_gate == GateContoroller.Ticket_OK2)
-            {
-                Completed();
-                //Debug.Log("→");
-            }
-            else{
-                //ポコポコ怒りアニメーション
-                //Debug.Log("??");
-            }
+            TicketChoice(GateContoroller.Ticket_OK2);
         }
+
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            if (_gate == GateContoroller.Pasumo_OK)
-            {
-                Completed();
-                //Debug.Log("↑");
-            }
-            else{
-                //ポコポコ怒りアニメーション
-                //Debug.Log("??");
-            }
+            TicketChoice(GateContoroller.Pasumo_OK);
         }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (_gate == GateContoroller.NO)
-            {
-                //正しく止めたことを人クラスに渡す（関数呼び出し）
-                timeOn = false;
-                timer = 0;
-                _gate = GateContoroller.Start;
-                //Debug.Log("SPACE");
-            }
-            else{
-                //間違えて止めたことを人クラスに渡す（関数呼び出し）
-                timeOn = false;
-                timer = 0;
-                _gate = GateContoroller.Start;
-                //Debug.Log("SPACE_BAD");
-            }
+            SpaceDoor();
         }
     }
 
+    /// <summary>
+    /// 人クラスから呼び出す(引数にチケットの種類入力)
+    /// </summary>
+    /// <param name="type"></param>
     public void SetTicket(TicketType type){
         //人の持っているチケット情報をこのスクリプトのenum変数に取得する
         _ticket = type;
@@ -110,43 +109,100 @@ public class TicketGate : MonoBehaviour
             case TicketType.paper:
             case TicketType.paper_miss:
                 _gate = GateContoroller.Ticket;
-                //Debug.Log("TICKET");
+                Debug.Log("TICKET");
                 break;
             case TicketType.suica:
                 _gate = GateContoroller.Pasumo_OK;
-                //Debug.Log("PASUMO");
+                Debug.Log("PASUMO");
                 break;
             case TicketType.suica_miss:
                 _gate = GateContoroller.NO;
-                //Debug.Log("PASUMO_NO");
+                Debug.Log("PASUMO_NO");
                 break;
         }
         //タイマーを開始する
         timeOn = true;
     }
 
+
+    /// <summary>
+    /// 切符が間違っているかどうかを取得(間違ってたらNO,あってたらTicket_OK1)
+    /// </summary>
     private void TicketSort()
     {
-        if (_gate == GateContoroller.Ticket)
+        //切符が間違っているかどうかを取得(間違ってたらNO,あってたらTicket_OK1)
+        if (_ticket == TicketType.paper)
         {
-            //切符が間違っているかどうかを取得(間違ってたらNO,あってたらTicket_OK1)
-            if (_ticket == TicketType.paper)
-            {
-                _gate = GateContoroller.Ticket_OK1;
-                //Debug.Log("GOOD");
-            }
-            if (_ticket == TicketType.paper_miss)
-            {
-                _gate = GateContoroller.NO;
-                //Debug.Log("NO_GOOD");
-            }
-            //Debug.Log("←");
+            _gate = GateContoroller.Ticket_OK1;
+            Debug.Log("GOOD");
+        }
+        if (_ticket == TicketType.paper_miss)
+        {
+            _gate = GateContoroller.NO;
+            Debug.Log("NO_GOOD");
+        }
+    }
+
+
+    /// <summary>
+    /// 特定の列挙かどうか判断、および列挙変更(スペース以外)
+    /// </summary>
+    /// <param name="gate"></param>
+    private void TicketChoice(GateContoroller gate)
+    {
+        if (_gate != gate)
+        {
+            //ポコポコ怒りアニメーション
+            Debug.Log("??");
+            return;
+        }
+        switch (gate)
+        {
+            case GateContoroller.Pasumo_OK:
+                staffAnim.SetTrigger("pasumo");
+                Completed();
+                Debug.Log("↑");
+                break;
+            case GateContoroller.Ticket:
+                staffAnim.SetTrigger("toGet");
+                TicketSort();
+                Debug.Log("←");
+                break;
+            case GateContoroller.Ticket_OK1:
+                staffAnim.SetTrigger("toPush");
+                _gate = GateContoroller.Ticket_OK2;
+                Debug.Log("↓");
+                break;
+            case GateContoroller.Ticket_OK2:
+                staffAnim.SetTrigger("toOut");
+                Completed();
+                Debug.Log("→");
+                break;
+            default:
+                return;
+        }
+    }
+
+
+    /// <summary>
+    /// スペース時の判別
+    /// </summary>
+    private void SpaceDoor()
+    {
+        staffAnim.SetTrigger("toGate");
+        if (_gate == GateContoroller.NO)
+        {
+            //正しく止めたことを人クラスに渡す（関数呼び出し）
+            Debug.Log("SPACE");
         }
         else
         {
-            //ポコポコ怒りアニメーション
-            //Debug.Log("??");
+            //間違えて止めたことを人クラスに渡す（関数呼び出し）
+            Debug.Log("SPACE_BAD");
         }
+        timeOn = false;
+        timer = 0;
+        _gate = GateContoroller.Start;
     }
 
 
@@ -157,6 +213,6 @@ public class TicketGate : MonoBehaviour
         /*人クラスにタイムと終了したかを渡す関数呼び出し*/
         timer = 0;
         _gate = GateContoroller.Start;
-        //Debug.Log("END");
+        Debug.Log("END");
     }
 }
