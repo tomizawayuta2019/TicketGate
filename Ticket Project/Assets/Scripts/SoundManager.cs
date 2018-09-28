@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class SoundManager : SingletonMonoBehaviour<SoundManager> {
     public enum SoundType {
-        gateClose,//ゲートを閉める
-        gateEnter,//ゲート通過
         ticketIn,//チケット入れる
-        ticketOut,//チケット出る
-        suicaEnter,//スイカタッチ
-        suicaMiss,//スイカ間違い
+        suicaIn,//
+        Stop,//
+        Train,//
+        zawameki,//
+        announce,//
+        rushTime,//
     }
 
     public enum BGMType {
