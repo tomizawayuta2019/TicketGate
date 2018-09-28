@@ -112,6 +112,7 @@ public class TicketGate : MonoBehaviour
         //人の持っているチケット情報をこのスクリプトのenum変数に取得する
         _ticket = type;
         //チケットの種類を見て、_gateの値を変える(switch)
+        Debug.Log(_ticket);
         switch (_ticket)
         {
             case TicketType.paper:
