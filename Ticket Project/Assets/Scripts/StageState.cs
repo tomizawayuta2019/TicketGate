@@ -51,6 +51,7 @@ public class StageState : ScriptableObject {
     float suicaPer;//電子チケットの確立
     public float SuicaPer { get { return suicaPer; } }
     [SerializeField]
+    [Range(0,1)]
     float missPer;//間違ったチケットの可能性
     public float MissPer { get { return missPer; } }
 

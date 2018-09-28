@@ -124,8 +124,6 @@ public class HumanManager : MonoBehaviour {
         {
             TicketIn();
 
-            Debug.Log("StartComplete");
-
             GateIn();
         }));
     }
@@ -185,8 +183,6 @@ public class HumanManager : MonoBehaviour {
         //targetTime = firstInfo.GetTargetTime();
 
         TicketGate.instance.SetTicket(type);
-
-        Debug.Log(firstInfo);
     }
 
     /// <summary>

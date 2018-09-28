@@ -120,14 +120,16 @@ public class TicketGate : MonoBehaviour
             case TicketType.paper:
             case TicketType.paper_miss:
                 _gate = GateContoroller.Ticket;
-                StartCoroutine(TicketPreview(true));
+                StartCoroutine(TicketPreview(_ticket == TicketType.paper));
                 //Debug.Log("TICKET");
                 break;
             case TicketType.suica:
+                StartCoroutine(LampPreview(true));
                 _gate = GateContoroller.Pasumo_OK;
                 //Debug.Log("PASUMO");
                 break;
             case TicketType.suica_miss:
+                StartCoroutine(LampPreview(false));
                 _gate = GateContoroller.NO;
                 //Debug.Log("PASUMO_NO");
                 break;
@@ -253,9 +255,9 @@ public class TicketGate : MonoBehaviour
         action();
     }
 
-    private Vector2 defPos = new Vector2(0, -900);
-    public IEnumerator TicketPreview(bool check) {
-        GameObject prefab = Resources.Load("Prefabs/BigTicket") as GameObject;
+    private Vector2 defPos = new Vector2(0, -500);
+    private IEnumerator TicketPreview(bool check) {
+        GameObject prefab = Resources.Load(check ? "Prefabs/BigTicket" : "Prefabs/BigTicket_miss") as GameObject;
         GameObject ticket = Instantiate(prefab)as GameObject;
         ticket.transform.SetParent(canvas.transform);
         RectTransform rect = ticket.GetComponent<RectTransform>();
@@ -279,5 +281,18 @@ public class TicketGate : MonoBehaviour
         }
 
         Destroy(ticket);
+    }
+
+    private IEnumerator LampPreview(bool check) {
+        Debug.Log("lamp");
+        GameObject prefab = Resources.Load(check ? "Prefabs/Lamp_Green" : "Prefabs/Lamp_Red") as GameObject;
+        GameObject lamp = Instantiate(prefab);
+        lamp.transform.SetParent(canvas.transform);
+        lamp.GetComponent<RectTransform>().localPosition = Vector2.zero;
+        lamp.GetComponent<RectTransform>().localScale = Vector2.one;
+
+        yield return new WaitForSeconds(0.1f);
+        while (_gate == GateContoroller.NO || _gate == GateContoroller.Pasumo_OK) { yield return null; }
+        Destroy(lamp);
     }
 }
