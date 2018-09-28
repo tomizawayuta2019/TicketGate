@@ -114,7 +114,6 @@ public class TicketGate : MonoBehaviour
         //人の持っているチケット情報をこのスクリプトのenum変数に取得する
         _ticket = type;
         //チケットの種類を見て、_gateの値を変える(switch)
-        Debug.Log(_ticket);
         switch (_ticket)
         {
             case TicketType.paper:
@@ -148,12 +147,12 @@ public class TicketGate : MonoBehaviour
         if (_ticket == TicketType.paper)
         {
             _gate = GateContoroller.Ticket_OK1;
-            Debug.Log("GOOD");
+            //Debug.Log("GOOD");
         }
         if (_ticket == TicketType.paper_miss)
         {
             _gate = GateContoroller.NO;
-            Debug.Log("NO_GOOD");
+            //Debug.Log("NO_GOOD");
         }
     }
 
@@ -167,7 +166,7 @@ public class TicketGate : MonoBehaviour
         if (_gate != gate)
         {
             //ポコポコ怒りアニメーション
-            Debug.Log("??");
+            //Debug.Log("??");
             return;
         }
         switch (gate)
@@ -175,23 +174,23 @@ public class TicketGate : MonoBehaviour
             case GateContoroller.Pasumo_OK:
                 staffAnim.SetTrigger("pasumo");
                 Completed();
-                Debug.Log("↑");
+                //Debug.Log("↑");
                 EffectManager.instance.PlayEffect(EffectManager.EffectType.Peep, new Vector2(0, 0));
                 break;
             case GateContoroller.Ticket:
                 staffAnim.SetTrigger("toGet");
                 TicketSort();
-                Debug.Log("←");
+                //Debug.Log("←");
                 break;
             case GateContoroller.Ticket_OK1:
                 staffAnim.SetTrigger("toPush");
                 _gate = GateContoroller.Ticket_OK2;
-                Debug.Log("↓");
+                //Debug.Log("↓");
                 break;
             case GateContoroller.Ticket_OK2:
                 staffAnim.SetTrigger("toOut");
                 Completed();
-                Debug.Log("→");
+                //Debug.Log("→");
                 break;
             default:
                 return;
@@ -205,7 +204,7 @@ public class TicketGate : MonoBehaviour
     private void SpaceDoor()
     {
         staffAnim.SetTrigger("toGate");
-        if (_gate == GateContoroller.NO)
+        if (_gate == GateContoroller.NO || (_gate == GateContoroller.Ticket && _ticket == TicketType.paper_miss))
         {
             //正しく止めたことを人クラスに渡す（関数呼び出し）
             //Debug.Log("SPACE");
@@ -229,7 +228,7 @@ public class TicketGate : MonoBehaviour
     private void Completed()
     {
         timeOn = false;
-        Debug.Log(timer);
+        //Debug.Log(timer);
         /*人クラスにタイムと終了したかを渡す関数呼び出し*/
         HumanManager.instance.ActionComplete(timer);
         timer = 0;

@@ -20,7 +20,7 @@ public class EffectManager : SingletonMonoBehaviour<EffectManager> {
             return;
         }
         base.Awake();
-        if (canvas == null) { canvas = GameObject.Find("Canvas"); }
+        if (canvas == null) { canvas = GameObject.Find("UICanvas"); }
     }
 
     public GameObject PlayEffect(EffectType value,Vector3 position) {

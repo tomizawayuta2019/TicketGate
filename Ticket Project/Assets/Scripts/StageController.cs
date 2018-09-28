@@ -89,7 +89,7 @@ public class HumanManager : MonoBehaviour {
 
         // 生成と座標指定--------------------------------*
         GameObject human = Instantiate(_humanPrefab);
-        human.transform.SetParent(GameObject.Find("Canvas").transform);
+        human.transform.SetParent(GameObject.Find("HumanCanvas").transform);
         hMove = human.AddComponent<HumanMove>();
 
         waitingPos = new Vector2(startPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, startPos.y);
@@ -236,6 +236,7 @@ public class HumanManager : MonoBehaviour {
         if (check)
         {
             StageController.instance.AddScore(10);
+            Debug.Log("add score");
         }
         else
         {
@@ -264,7 +265,7 @@ public class StageController : MonoBehaviour {
     private int nowLineAddCount = 0;
     [SerializeField]
     private float frustration;
-    private const float maxFrustration = 100;
+    public const float maxFrustration = 100;
     public float Frustration { get { return frustration; } }
     public string NowTimeName { get{ return nowLineNumber <= line.Count ? line[nowLineNumber].Name : "終業"; } }
     private int passHumanCount = 0;
@@ -363,6 +364,7 @@ public class StageController : MonoBehaviour {
 
     private void GameClear() {
         Debug.Log("Game Clear!!!");
+        GameResult.instance.FinishGame();
     }
 
     private void GameOver() {

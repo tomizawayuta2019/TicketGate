@@ -57,7 +57,7 @@ public class HumanMove : MonoBehaviour {
 
     private void ChangeSprite(Sprite value) {
         GetComponent<Image>().sprite = value;
-        rect.sizeDelta = value.rect.size / 2;
+        rect.sizeDelta = value.rect.size;
     }
 
     public void SetWaitingPos(Vector2 waitingPos) {
@@ -136,7 +136,7 @@ public class HumanMove : MonoBehaviour {
             }
         } while (rect.localPosition.x < targetPos.x);
 
-        rect.localPosition = targetPos;
+        rect.localPosition = new Vector2(targetPos.x, rect.localPosition.y);
 
         //transform.position = targetPos;
         if (comp != null) { comp(); }
