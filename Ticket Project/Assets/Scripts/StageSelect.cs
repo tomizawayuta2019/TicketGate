@@ -9,8 +9,9 @@ public class StageSelect : MonoBehaviour {
     [SerializeField] Text[] stage_text; //ステージの名前
     [SerializeField] Text[] score_text; //スコア
     [SerializeField] Button[] stage_button;  //ボタン
-    // Use this for initialization
     void Start () {
+
+
         //ステージ名とスコア表示
         for (int i = 0; i < stage_num.Length; i++)
         {
@@ -27,13 +28,13 @@ public class StageSelect : MonoBehaviour {
         }
     }
 	
-	// Update is called once per frame
 	void Update () {
-        
+
     }
 
-    public void StageChange()   //ステージ移行
+    public void StageChange(string SceneName)   //ステージ移行
     {
-        SceneManager.LoadScene("Scene/Main");
+        Fade.instance.FadeStart(SceneName);
     }
+
 }
