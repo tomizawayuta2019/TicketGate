@@ -131,7 +131,7 @@ public class HumanManager : MonoBehaviour {
     private void GateIn() {
         StartCoroutine(TicketGate.instance.WaitTicketTiming(() =>
         {
-            if (!humanLines.Peek().GetComponent<HumanMove>().isGateStart) { return; }
+            if (humanLines.Count > 0 && !humanLines.Peek().GetComponent<HumanMove>().isGateStart) { return; }
             GateInHuman = humanLines.Dequeue();
             firstHuman = GateInHuman.gameObject;
             //firstInfo.GetComponent<HumanMove>().GotoEndPos(() => EndPosComplate());
@@ -147,6 +147,7 @@ public class HumanManager : MonoBehaviour {
     {
         Debug.Log("EndComplete");
 
+        if (!GateInHuman) { GateInHuman = humanLines.Dequeue(); }
         GateInHuman.GetComponent<HumanMove>().GotoOutScreen();
         isMoveNow = false;
 
@@ -159,6 +160,7 @@ public class HumanManager : MonoBehaviour {
             firstHuman = GateInHuman.gameObject;
             firstInfo.GetComponent<HumanMove>().GotoStartPoss(() => StartPosComplate());
         }
+        GateInHuman = null;
     }
 
     /// <summary>
