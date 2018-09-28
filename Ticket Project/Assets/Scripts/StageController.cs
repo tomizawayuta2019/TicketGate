@@ -117,6 +117,16 @@ public class StageController : MonoBehaviour {
     [HideInInspector]
     public HumanManager hManager;
 
+    private static StageState NextStage = null;
+    public static void SetStage(StageState value) {
+        NextStage = value;
+    }
+
+    private void GetStage() {
+        nowStage = NextStage;
+        NextStage = null;
+    }
+
     /// <summary>
     /// 合計就業時間の取得
     /// </summary>
@@ -130,6 +140,7 @@ public class StageController : MonoBehaviour {
         instance = this;
         line = new List<HumanLine>(nowStage.humans);
         hManager = new HumanManager();
+        GetStage();
     }
 
     private void Update()

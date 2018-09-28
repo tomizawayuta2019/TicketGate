@@ -8,6 +8,7 @@ public class StageSelect : MonoBehaviour {
     [SerializeField] StageState[] stage_num; //ステージ情報
     [SerializeField] Text[] stage_text; //ステージの名前
     [SerializeField] Text[] score_text; //スコア
+
     [SerializeField] Button[] stage_button;  //ボタン
     void Start () {
 
@@ -18,6 +19,7 @@ public class StageSelect : MonoBehaviour {
             stage_text[i].text = stage_num[i].StageName;
             score_text[i].text = stage_num[i].MaxScore.ToString();
         }
+
         //ステージのクリア情報
         for (int i = 0; i < stage_num.Length-1; i++) {
             if (stage_num[i].IsClear == false){
@@ -27,14 +29,11 @@ public class StageSelect : MonoBehaviour {
             }
         }
     }
-	
-	void Update () {
 
-    }
-
-    public void StageChange(string SceneName)   //ステージ移行
+    public void StageChange(int stagenum)   //ステージ移行
     {
-        Fade.instance.FadeStart(SceneName);
+        StageController.SetStage(stage_num[stagenum]);
+        Fade.instance.FadeStart("Main");
     }
 
 }
