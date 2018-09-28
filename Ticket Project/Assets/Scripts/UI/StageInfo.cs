@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 public class StageInfo : MonoBehaviour {
 
-    //[SerializeField]
-    //private StageController _controller;
+    [SerializeField]
+    private StageController _controller;
     [SerializeField]
     private Sprite[] firstnumber = new Sprite[10];
     [SerializeField]
@@ -28,12 +28,11 @@ public class StageInfo : MonoBehaviour {
 	void Start () {
         second_spr.sprite = secondnumber[0];
 
-        //_controller = StageController.instance;
-        //_stage = _controller.nowStage;
-        //min_hour = _controller.nowStage.StartHour;
-        //max_hour = _controller.nowStage.EndHour;
-        min_hour = 5;
-        max_hour = 23;
+        _controller = StageController.instance;
+        min_hour = _controller.nowStage.StartHour;
+        max_hour = _controller.nowStage.EndHour;
+        //min_hour = 5;
+        //max_hour = 23;
 
         num = 180.0f / (max_hour - min_hour);
         ///時間が１進むのに必要な秒数を求める

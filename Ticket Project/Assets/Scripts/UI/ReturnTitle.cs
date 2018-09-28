@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class NextS : MonoBehaviour {
+public class ReturnTitle : MonoBehaviour {
     public void OnClick()
     {
-        // nextstageへ移行
+        // Titleへ移行
         SceneManager.LoadScene("");
     }
 }
