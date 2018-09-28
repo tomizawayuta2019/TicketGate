@@ -315,9 +315,9 @@ public class StageController : MonoBehaviour {
     private void Awake()
     {
         instance = this;
+        nowStage = GetStage();
         line = new List<HumanLine>(nowStage.humans);
         hManager = gameObject.AddComponent<HumanManager>();
-        nowStage = GetStage();
     }
 
     private void Update()
@@ -362,7 +362,7 @@ public class StageController : MonoBehaviour {
         nowLineNumber++;
         nowLineAddCount = 0;
         UpdateHumanLine();
-        if (nowLineNumber == line.Count)
+        if (nowLineNumber >= line.Count)
         {
             HumanLineEnd();
             SoundManager.instance.ChangeBGMSpeed(1.0f);

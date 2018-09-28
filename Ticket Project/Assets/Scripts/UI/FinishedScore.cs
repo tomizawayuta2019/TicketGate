@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class FinishedScore : MonoBehaviour {
-
+    [SerializeField]
     private float totalscore;
     private float oldscore;
     [SerializeField]
@@ -45,7 +45,7 @@ public class FinishedScore : MonoBehaviour {
         else if ((totalscore >= 100) && (totalscore < 1000)) // 4桁目
         {
             _img[2].sprite = _number[(int)(totalscore / 100)];
-            _img[1].sprite = _number[(int)(totalscore % 100 % 10)];
+            _img[1].sprite = _number[(int)(totalscore % 100) / 10];
             _img[0].sprite = _number[(int)(totalscore % 10)];
         }
         else if (totalscore >= 1000) // 5桁目

@@ -88,4 +88,11 @@ public class StageState : ScriptableObject {
         PlayerPrefs.SetInt(IsClearKey, IsClear ? 1 : 0);
         PlayerPrefs.Save();
     }
+
+    [ContextMenu("ResetScore")]
+    public void ResetScore() {
+        PlayerPrefs.SetFloat(MaxScoreKey, 0);
+        PlayerPrefs.SetInt(IsClearKey, 0);
+        PlayerPrefs.Save();
+    }
 }
