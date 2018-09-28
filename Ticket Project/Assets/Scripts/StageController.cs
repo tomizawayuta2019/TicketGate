@@ -200,7 +200,14 @@ public class HumanManager : MonoBehaviour {
     public void ActionComplete(float finishTime)
     {
         //HumanInfo firstInfo = humanLines.Peek();
-        HumanInfo firstInfo = GateInHuman.GetComponent<HumanInfo>();
+        HumanInfo firstInfo = null;
+        if (GateInHuman)
+        {
+            firstInfo = GateInHuman.GetComponent<HumanInfo>();
+        }
+        else {
+            firstInfo = humanLines.Peek();
+        }
         float firstTargetTime = firstInfo.GetTargetTime();
         float addScore = 10f;
         float addFrus = 0;
