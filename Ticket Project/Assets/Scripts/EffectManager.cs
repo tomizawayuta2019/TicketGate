@@ -4,17 +4,31 @@ using UnityEngine;
 
 public class EffectManager : SingletonMonoBehaviour<EffectManager> {
     public enum EffectType {
-        frustration,//不満表示
+        Peep,//「ピッ」の電子音
         gateClose,//ゲートを閉める
         gateHit,//ゲートにぶつかる
         cutIn,//カットイン表示
     }
 
     public List<GameObject> effectPrefabs = new List<GameObject>();
+    [SerializeField]
+    GameObject canvas;
+
+
+    protected override void Awake()
+    {
+        if (instance) {
+            Destroy(gameObject);
+            return;
+        }
+        base.Awake();
+        if (canvas == null) { canvas = GameObject.Find("Canvas"); }
+    }
 
     public GameObject PlayEffect(EffectType value,Vector3 position) {
         GameObject effect = Instantiate(effectPrefabs[(int)value]);
-        effect.transform.position = position;
+        effect.transform.SetParent(canvas.transform);
+        effect.GetComponent<RectTransform>().localPosition = position;
         effect.AddComponent<EffectDest>();
         return effect;
     }

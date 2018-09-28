@@ -174,6 +174,7 @@ public class TicketGate : MonoBehaviour
                 staffAnim.SetTrigger("pasumo");
                 Completed();
                 Debug.Log("↑");
+                EffectManager.instance.PlayEffect(EffectManager.EffectType.Peep, new Vector2(0, 0));
                 break;
             case GateContoroller.Ticket:
                 staffAnim.SetTrigger("toGet");

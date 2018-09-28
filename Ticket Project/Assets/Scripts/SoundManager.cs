@@ -29,6 +29,15 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager> {
 
     private Dictionary<SoundType, AudioSource> playSEList = new Dictionary<SoundType, AudioSource>();
 
+    protected override void Awake()
+    {
+        if (instance) {
+            Destroy(gameObject);
+            return;
+        }
+        base.Awake();
+    }
+
     private void Start()
     {
         bgmSource = gameObject.AddComponent<AudioSource>();
