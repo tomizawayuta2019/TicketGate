@@ -13,6 +13,8 @@ public class HumanMove : MonoBehaviour {
     RectTransform rect;
     RectTransform targetHumanRect;//前を歩いている人のRect
 
+    public bool isGateStart = false;
+
     public static RectTransform defRect;//直前に生成されたHumanのRect
 
     private void Awake()
@@ -59,7 +61,7 @@ public class HumanMove : MonoBehaviour {
     /// </param>
     public void GotoStartPoss(System.Action comp) {
         MoveStop();
-        move = StartCoroutine(Move(startPos, comp));
+        move = StartCoroutine(Move(startPos, ()=> { comp();isGateStart = true; }));
     }
 
     /// <summary>
@@ -71,7 +73,6 @@ public class HumanMove : MonoBehaviour {
     /// GotoStartPoss(() => { 何かの処理 })　でも呼べます。複数行も可。
     /// </param>
     public void GotoEndPos(System.Action comp) {
-        Debug.Log("GotoEnd");
         MoveStop();
         move = StartCoroutine(Move(endPos, comp));
     }

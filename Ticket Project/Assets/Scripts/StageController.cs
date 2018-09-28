@@ -50,6 +50,7 @@ public class HumanInfo : MonoBehaviour {
 /// </summary>
 public class HumanManager : MonoBehaviour {
     public Queue<HumanInfo> humanLines = new Queue<HumanInfo>();
+    public HumanInfo GateInHuman = null;
     private GameObject _humanPrefab;
     private GameObject firstHuman;
     public static HumanManager instance;
@@ -130,10 +131,11 @@ public class HumanManager : MonoBehaviour {
     private void GateIn() {
         StartCoroutine(TicketGate.instance.WaitTicketTiming(() =>
         {
-            HumanInfo firstInfo = humanLines.Peek();
-            firstHuman = firstInfo.gameObject;
+            if (!humanLines.Peek().GetComponent<HumanMove>().isGateStart) { return; }
+            GateInHuman = humanLines.Dequeue();
+            firstHuman = GateInHuman.gameObject;
             //firstInfo.GetComponent<HumanMove>().GotoEndPos(() => EndPosComplate());
-            firstInfo.GetComponent<HumanMove>().GotoEndPos(() => { });
+            GateInHuman.GetComponent<HumanMove>().GotoEndPos(() => { });
             isMoveNow = true;
         }));
     }
@@ -145,16 +147,16 @@ public class HumanManager : MonoBehaviour {
     {
         Debug.Log("EndComplete");
 
-        humanLines.Peek().GetComponent<HumanMove>().GotoOutScreen();
+        GateInHuman.GetComponent<HumanMove>().GotoOutScreen();
         isMoveNow = false;
 
         //Dequeue
-        HumanInfo breakInfo = humanLines.Dequeue();
+        //HumanInfo breakInfo = humanLines.Dequeue();
         // 次の人がいたら、その人をStartさせる
         if(humanLines.Count > 0)
         {
             HumanInfo firstInfo = humanLines.Peek();
-            firstHuman = firstInfo.gameObject;
+            firstHuman = GateInHuman.gameObject;
             firstInfo.GetComponent<HumanMove>().GotoStartPoss(() => StartPosComplate());
         }
     }
@@ -216,7 +218,12 @@ public class HumanManager : MonoBehaviour {
     /// </summary>
     /// <param name="check">ゲートを閉じたことが間違いか否か</param>
     public void GateClose(bool check){
-        HumanMove humanMove = humanLines.Dequeue().GetComponent<HumanMove>();
+        if (!GateInHuman) {
+            humanLines.Dequeue().GetComponent<HumanMove>().ReturnToGate();
+            isMoveNow = false;
+            return;
+        }
+        HumanMove humanMove = GateInHuman.GetComponent<HumanMove>();
         humanMove.ReturnToGate();
         isMoveNow = false;
     }
