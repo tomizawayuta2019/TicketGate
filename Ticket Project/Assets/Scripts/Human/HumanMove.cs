@@ -5,6 +5,7 @@ using UnityEngine;
 public class HumanMove : MonoBehaviour {
 
     private Vector2 startPos, endPos;
+    [SerializeField]
     private float moveSpeed;
     private const float outScreenDistance = 10;//改札から出てどれくらいまで歩くか
     private Coroutine move;
@@ -12,7 +13,7 @@ public class HumanMove : MonoBehaviour {
     //デバッグ用
     //private void Awake()
     //{
-    //    Init(new Vector2(-6, 0), new Vector2(-3, 0), new Vector2(3, 0), 2);
+    //    Init(new Vector2(-6, 0), new Vector2(-3, 0), new Vector2(3, 0), StageController.instance.GetHumanMoveSpeed());
     //    GotoStartPoss(() => GotoEndPos(() => GotoOutScreen()));
     //}
 
