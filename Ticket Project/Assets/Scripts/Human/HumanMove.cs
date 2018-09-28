@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HumanMove : MonoBehaviour {
 
     private Vector2 startPos, endPos;
+    private Sprite walk, pass;
     Vector2? waitingPos = null;
     [SerializeField]
     private float moveSpeed;
@@ -47,6 +49,17 @@ public class HumanMove : MonoBehaviour {
         this.moveSpeed = moveSpeed;
     }
 
+    public void SetSprite(Sprite walk,Sprite pass) {
+        this.walk = walk;
+        this.pass = pass;
+        ChangeSprite(walk);
+    }
+
+    private void ChangeSprite(Sprite value) {
+        GetComponent<Image>().sprite = value;
+        rect.sizeDelta = value.rect.size / 2;
+    }
+
     public void SetWaitingPos(Vector2 waitingPos) {
         this.waitingPos = waitingPos;
     }
@@ -61,7 +74,7 @@ public class HumanMove : MonoBehaviour {
     /// </param>
     public void GotoStartPoss(System.Action comp) {
         MoveStop();
-        move = StartCoroutine(Move(startPos, ()=> { comp();isGateStart = true; }));
+        move = StartCoroutine(Move(startPos, ()=> { comp();isGateStart = true;ChangeSprite(pass); }));
     }
 
     /// <summary>
@@ -74,6 +87,7 @@ public class HumanMove : MonoBehaviour {
     /// </param>
     public void GotoEndPos(System.Action comp) {
         MoveStop();
+        ChangeSprite(walk);
         move = StartCoroutine(Move(endPos, comp));
     }
 

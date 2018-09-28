@@ -58,6 +58,7 @@ public class StageState : ScriptableObject {
     public int StartHour { get { return startHour; } }
     public int EndHour { get { return endHour; } }
 
+    public HumanSprite humanSprite;
     public List<HumanLine> humans = new List<HumanLine>();
 
     private string IsClearKey { get{ return "Stage" + StageID + "IsClear"; } }

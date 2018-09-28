@@ -99,6 +99,8 @@ public class HumanManager : MonoBehaviour {
         
         //hMove.SetWaitingPos(waitingPos);
         hMove.Init(createPos, startPos, endPos, moveSpeed);
+        HumanSprite.SpriteSet sprites = StageController.instance.nowStage.humanSprite.GetRndHuman();
+        hMove.SetSprite(sprites.walk, sprites.pass);
         // ------------------------------------*
 
         // StartPosに移動
@@ -251,6 +253,7 @@ public class StageController : MonoBehaviour {
     private int nowLineAddCount = 0;
     [SerializeField]
     private float frustration;
+    private const float maxFrustration = 100;
     public float Frustration { get { return frustration; } }
     public string NowTimeName { get{ return nowLineNumber <= line.Count ? line[nowLineNumber].Name : "終業"; } }
     private int passHumanCount = 0;
@@ -339,6 +342,19 @@ public class StageController : MonoBehaviour {
     /// 人の流れの終了
     /// </summary>
     private void HumanLineEnd() {
+        StartCoroutine(WaitHuman());
+    }
+
+    private IEnumerator WaitHuman() {
+        while (HumanManager.instance.humanLines.Count > 0) { yield return null; }
+        GameClear();
+    }
+
+    private void GameClear() {
+
+    }
+
+    private void GameOver() {
 
     }
 
@@ -382,6 +398,9 @@ public class StageController : MonoBehaviour {
     /// <param name="value"></param>
     public void AddFrustration(float value) {
         frustration += value;
+        if (frustration > maxFrustration) {
+            GameOver();
+        }
     }
 
     /// <summary>
