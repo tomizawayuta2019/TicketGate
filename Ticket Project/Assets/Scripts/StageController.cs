@@ -218,6 +218,15 @@ public class HumanManager : MonoBehaviour {
     /// </summary>
     /// <param name="check">ゲートを閉じたことが間違いか否か</param>
     public void GateClose(bool check){
+        if (check)
+        {
+            StageController.instance.AddScore(10);
+        }
+        else
+        {
+            StageController.instance.AddFrustration(10);
+        }
+
         if (!GateInHuman) {
             humanLines.Dequeue().GetComponent<HumanMove>().ReturnToGate();
             isMoveNow = false;
