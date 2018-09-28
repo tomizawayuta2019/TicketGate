@@ -132,6 +132,6 @@ public class HumanMove : MonoBehaviour {
     /// <returns></returns>
     private Vector2 GetTargetHumanWaitingPoss() {
         if (!targetHumanRect) { return new Vector2(Mathf.Infinity, 0); }
-        return (Vector2)targetHumanRect.localPosition - targetHumanRect.sizeDelta / 2;
+        return (Vector2)targetHumanRect.localPosition - targetHumanRect.sizeDelta;
     }
 }
