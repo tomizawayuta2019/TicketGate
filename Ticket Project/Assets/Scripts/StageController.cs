@@ -132,6 +132,7 @@ public class HumanManager : MonoBehaviour {
         StartCoroutine(TicketGate.instance.WaitTicketTiming(() =>
         {
             if (humanLines.Count > 0 && !humanLines.Peek().GetComponent<HumanMove>().isGateStart) { return; }
+            if (!GateInHuman && humanLines.Count == 0) { return; }
             GateInHuman = humanLines.Dequeue();
             firstHuman = GateInHuman.gameObject;
             //firstInfo.GetComponent<HumanMove>().GotoEndPos(() => EndPosComplate());
@@ -147,7 +148,13 @@ public class HumanManager : MonoBehaviour {
     {
         Debug.Log("EndComplete");
 
-        if (!GateInHuman) { GateInHuman = humanLines.Dequeue(); }
+        if (!GateInHuman) {
+            if (humanLines.Count == 0) {
+                return;
+            }
+            GateInHuman = humanLines.Dequeue();
+
+        }
         GateInHuman.GetComponent<HumanMove>().GotoOutScreen();
         isMoveNow = false;
 
@@ -192,7 +199,8 @@ public class HumanManager : MonoBehaviour {
     /// <param name="check"></param>
     public void ActionComplete(float finishTime)
     {
-        HumanInfo firstInfo = humanLines.Peek();
+        //HumanInfo firstInfo = humanLines.Peek();
+        HumanInfo firstInfo = GateInHuman.GetComponent<HumanInfo>();
         float firstTargetTime = firstInfo.GetTargetTime();
         float addScore = 10f;
         float addFrus = 0;
@@ -347,11 +355,11 @@ public class StageController : MonoBehaviour {
     }
 
     private void GameClear() {
-
+        Debug.Log("Game Clear!!!");
     }
 
     private void GameOver() {
-
+        Debug.Log("Game Over...");
     }
 
     /// <summary>

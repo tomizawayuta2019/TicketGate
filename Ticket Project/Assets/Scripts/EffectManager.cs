@@ -5,8 +5,6 @@ using UnityEngine;
 public class EffectManager : SingletonMonoBehaviour<EffectManager> {
     public enum EffectType {
         Peep,//「ピッ」の電子音
-        gateClose,//ゲートを閉める
-        gateHit,//ゲートにぶつかる
         cutIn,//カットイン表示
     }
 

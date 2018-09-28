@@ -220,6 +220,7 @@ public class TicketGate : MonoBehaviour
         timeOn = false;
         timer = 0;
         _gate = GateContoroller.Start;
+        EffectManager.instance.PlayEffect(EffectManager.EffectType.cutIn, Vector3.zero);
         //HumanManager.instance.EndPosComplate();
     }
 
