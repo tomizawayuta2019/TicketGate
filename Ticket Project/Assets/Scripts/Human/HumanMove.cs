@@ -10,6 +10,15 @@ public class HumanMove : MonoBehaviour {
     private const float outScreenDistance = 10;//改札から出てどれくらいまで歩くか
     private Coroutine move;
     RectTransform rect;
+    RectTransform targetHumanRect;//前を歩いている人のRect
+
+    public static RectTransform defRect;//直前に生成されたHumanのRect
+
+    private void Awake()
+    {
+        targetHumanRect = defRect;
+        defRect = GetComponent<RectTransform>();
+    }
 
     //デバッグ用
     //private void Awake()
@@ -88,6 +97,10 @@ public class HumanMove : MonoBehaviour {
 
         do {
             yield return null;
+            if (GetTargetHumanWaitingPoss().x <= rect.localPosition.x) {
+                rect.localPosition = GetTargetHumanWaitingPoss();
+                continue;
+            }
             if (waitingPos.x <= rect.localPosition.x) {
                 rect.localPosition = waitingPos;
                 continue;
@@ -99,5 +112,14 @@ public class HumanMove : MonoBehaviour {
 
         //transform.position = targetPos;
         if (comp != null) { comp(); }
+    }
+
+    /// <summary>
+    /// 直前に生成された人の直前の位置を取得する
+    /// </summary>
+    /// <returns></returns>
+    private Vector2 GetTargetHumanWaitingPoss() {
+        if (!targetHumanRect) { return new Vector2(Mathf.Infinity, 0); }
+        return (Vector2)targetHumanRect.localPosition - targetHumanRect.sizeDelta / 2;
     }
 }
