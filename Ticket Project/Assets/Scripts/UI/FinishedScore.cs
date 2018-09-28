@@ -5,18 +5,19 @@ using UnityEngine.UI;
 
 public class FinishedScore : MonoBehaviour {
 
-    private int totalscore;
+    private float totalscore;
     private Text score_txt;
+
+    StageController stagecont;
 
 	void Start () {
         score_txt = GetComponent<Text>();
-	}
-	void Update () {
+        stagecont = StageController.instance;
+
+        totalscore = stagecont.Score;
         score_txt.text = totalscore.ToString();
-	}
-    public int InScore(int _score)
-    {
-        totalscore += _score;
-        return totalscore;
     }
+	void Update () {
+
+	}
 }
