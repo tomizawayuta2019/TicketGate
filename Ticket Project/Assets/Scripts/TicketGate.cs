@@ -5,7 +5,7 @@ using UnityEngine;
 public class TicketGate : MonoBehaviour
 {
 
-    private enum GateContoroller
+    public enum GateContoroller
     {
         //人が来たらチケット情報取得
         Start,
@@ -23,12 +23,20 @@ public class TicketGate : MonoBehaviour
 
     private float timer;
     private bool timeOn = false;
+    [SerializeField]
     private GateContoroller _gate;
     //人のチケット情報enum
     private TicketType _ticket;
 
     public GameObject staff;
     private Animator staffAnim;
+
+    public static TicketGate instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     // Use this for initialization
     void Start()
@@ -37,7 +45,7 @@ public class TicketGate : MonoBehaviour
         timeOn = false;
         timer = 0;
         // test用 inspectorで呼び出す
-        setTest();
+        //setTest();
     }
 
     /// <summary>
@@ -194,15 +202,18 @@ public class TicketGate : MonoBehaviour
         {
             //正しく止めたことを人クラスに渡す（関数呼び出し）
             Debug.Log("SPACE");
+            HumanManager.instance.GateClose(true);
         }
         else
         {
             //間違えて止めたことを人クラスに渡す（関数呼び出し）
             Debug.Log("SPACE_BAD");
+            HumanManager.instance.GateClose(false);
         }
         timeOn = false;
         timer = 0;
         _gate = GateContoroller.Start;
+        //HumanManager.instance.EndPosComplate();
     }
 
 
@@ -211,8 +222,29 @@ public class TicketGate : MonoBehaviour
         timeOn = false;
         Debug.Log(timer);
         /*人クラスにタイムと終了したかを渡す関数呼び出し*/
+        HumanManager.instance.ActionComplete(timer);
         timer = 0;
         _gate = GateContoroller.Start;
+        HumanManager.instance.EndPosComplate();
         Debug.Log("END");
+    }
+
+    public IEnumerator WaitTicketTiming(System.Action action) {
+        GateContoroller nowType = _gate;
+        while (nowType == _gate) {
+            yield return null;
+        }
+
+        action();
+    }
+
+    public IEnumerator WaitStartTiming(System.Action action)
+    {
+        while (HumanManager.instance.IsMoceNow || GateContoroller.Start != _gate)
+        {
+            yield return null;
+        }
+
+        action();
     }
 }
