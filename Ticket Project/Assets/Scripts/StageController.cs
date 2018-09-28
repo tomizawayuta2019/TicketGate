@@ -51,11 +51,14 @@ public class HumanInfo : MonoBehaviour {
 public class HumanManager : MonoBehaviour {
     public Queue<HumanInfo> humanLines = new Queue<HumanInfo>();
     private GameObject _humanPrefab;
+    private GameObject firstHuman;
+    
 
     // 移動に必要な変数--------*
     private Vector2 createPos;
     private Vector2 startPos;
     private Vector2 endPos;
+    private Vector2 waitingPos;
     private float moveSpeed;
     // ------------------------*
 
@@ -68,34 +71,104 @@ public class HumanManager : MonoBehaviour {
         startPos = GameObject.Find("Canvas/StartPos").GetComponent<RectTransform>().localPosition;
         endPos = GameObject.Find("Canvas/EndPos").GetComponent<RectTransform>().localPosition;
 
+        HumanMove hMove;
+
         moveSpeed = StageController.instance.GetHumanMoveSpeed();
 
-        // 生成--------------------------------*
+        // 生成と座標指定--------------------------------*
         GameObject human = Instantiate(_humanPrefab);
         human.transform.SetParent(GameObject.Find("Canvas").transform);
+        hMove = human.AddComponent<HumanMove>();
 
-        //human.transform.position = new Vector2(createPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, createPos.y);
-
-        startPos = new Vector2(startPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, startPos.y);
-        Debug.Log("startPos" + startPos);
+        waitingPos = new Vector2(startPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, startPos.y);
+        
         createPos = new Vector2(createPos.x - humanLines.Count * human.GetComponent<RectTransform>().sizeDelta.x, createPos.y);
 
-        HumanMove hMove = human.AddComponent<HumanMove>();
+        
+        //hMove.SetWaitingPos(waitingPos);
         hMove.Init(createPos, startPos, endPos, moveSpeed);
         // ------------------------------------*
 
         // StartPosに移動
-        hMove.GotoStartPoss(() => { Debug.Log("Complate");});
+        hMove.GotoStartPoss(() => StartPosComplate());
         
         // 人情報を配列に入れる---------------------*
         HumanInfo info = human.AddComponent<HumanInfo>();
-
+        
         info.SetTicket(StageController.instance.GetRundTicketType());
         info.SetTargetTime(StageController.instance.GetHumanTargetTime());
-        Debug.Log("TotalBefore:" + humanLines.Count);
         humanLines.Enqueue(info);
-        Debug.Log("TotalAfter:" + humanLines.Count);
         // -----------------------------------------*
+    }
+
+    /// <summary>
+    /// スタート地点頭達時
+    /// </summary>
+    public void StartPosComplate()
+    {
+        Debug.Log("StartComplete");
+        HumanInfo firstInfo = humanLines.Peek();
+        firstHuman = firstInfo.gameObject;
+        //firstInfo.GetComponent<HumanMove>().SetWaitingPos(new Vector2(Mathf.Infinity, startPos.y));
+        firstInfo.GetComponent<HumanMove>().GotoEndPos(() => EndPosComplate());
+
+    }
+
+    /// <summary>
+    /// ゴール地点頭達時
+    /// </summary>
+    public void EndPosComplate()
+    {
+        Debug.Log("EndComplete");
+
+        humanLines.Peek().GetComponent<HumanMove>().GotoOutScreen();
+
+        //Dequeue
+        HumanInfo breakInfo = humanLines.Dequeue();
+        // 次の人がいたら、その人をStartさせる
+        if(humanLines.Count > 0)
+        {
+            HumanInfo firstInfo = humanLines.Peek();
+            firstHuman = firstInfo.gameObject;
+            firstInfo.GetComponent<HumanMove>().GotoStartPoss(() => StartPosComplate());
+        }
+    }
+
+    /// <summary>
+    /// 人通行後の不満度加減処理
+    /// </summary>
+    /// <param name="finishTime"></param>
+    /// <param name="check"></param>
+    public void ActionComplate(float finishTime, bool check)
+    {
+        HumanInfo firstInfo = humanLines.Peek();
+        float firstTargetTime = firstInfo.GetTargetTime();
+        float addFrus;
+
+        if (finishTime > firstTargetTime) addFrus = finishTime - firstTargetTime;
+        else addFrus = firstTargetTime - finishTime;
+
+        StageController.instance.PassHuman();
+        StageController.instance.AddFrustration(addFrus);
+    }
+
+    /// <summary>
+    /// チケットを入れた時の処理
+    /// </summary>
+    public void TicketIn()
+    {
+        // チケットの種類
+        TicketType type;
+
+        // 
+        float targetTime;
+        // 先頭の情報を取得
+        HumanInfo firstInfo = humanLines.Peek();
+
+        // 情報格納
+        type = firstInfo.GetTicket();
+        targetTime = firstInfo.GetTargetTime();
+        Debug.Log(firstInfo);
     }
 }
 
