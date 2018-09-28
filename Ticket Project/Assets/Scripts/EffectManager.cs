@@ -27,6 +27,7 @@ public class EffectManager : SingletonMonoBehaviour<EffectManager> {
         GameObject effect = Instantiate(effectPrefabs[(int)value]);
         effect.transform.SetParent(canvas.transform);
         effect.GetComponent<RectTransform>().localPosition = position;
+        effect.GetComponent<RectTransform>().localScale = effectPrefabs[(int)value].GetComponent<RectTransform>().localScale;
         effect.AddComponent<EffectDest>();
         return effect;
     }

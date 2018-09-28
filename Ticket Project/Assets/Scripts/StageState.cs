@@ -28,6 +28,9 @@ public struct HumanLine {
     [Range(0, 5f)]
     float randomRange;
     public float RandomRange { get { return randomRange; } }
+    [SerializeField]
+    bool isFever;
+    public bool IsFever { get { return isFever; } }
 }
 
 [CreateAssetMenu]

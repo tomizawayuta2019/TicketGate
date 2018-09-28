@@ -55,6 +55,7 @@ public class HumanManager : MonoBehaviour {
     private GameObject firstHuman;
     public static HumanManager instance;
     private int humanCount = 0;
+    private const int MaxHumanCount = 2;
     
 
     // 移動に必要な変数--------*
@@ -77,6 +78,7 @@ public class HumanManager : MonoBehaviour {
     /// 人生成
     /// </summary>
     public void CreateHuman() {
+        if (humanLines.Count >= MaxHumanCount) { return; }
         _humanPrefab = Resources.Load("Prefabs/HumanPrefab") as GameObject;
         _humanPrefab.name = (humanCount++).ToString();
         createPos = GameObject.Find("Canvas/CreatePos").GetComponent<RectTransform>().localPosition;
@@ -253,6 +255,14 @@ public class HumanManager : MonoBehaviour {
         isMoveNow = false;
     }
 
+    //public void HumanLineUpdate() {
+    //    Queue<HumanInfo> newQueue = new Queue<HumanInfo>();
+    //    newQueue.Enqueue(humanLines.Dequeue());
+    //    while (humanLines.Count > 0) { Destroy(humanLines.Dequeue().gameObject); }
+    //    humanLines = newQueue;
+    //    humanLines.Peek().GetComponent<HumanMove>().Awake();
+    //}
+
 }
 
 public class StageController : MonoBehaviour {
@@ -293,6 +303,10 @@ public class StageController : MonoBehaviour {
         if (!nextStage) { return nowStage; }
         StageState res = nextStage;
         nextStage = null;
+        for (int i = 0; i < StageSelect.stages.Length - 1; i++) {
+            if (StageSelect.stages[i] == res) { nextStage = StageSelect.stages[i + 1]; }
+        }
+        if (nextStage == null) { nextStage = StageSelect.stages[StageSelect.stages.Length - 1]; }
         return res;
     }
 
@@ -335,7 +349,7 @@ public class StageController : MonoBehaviour {
     /// 人の流れ方が変わった時に呼び出される処理
     /// </summary>
     private void UpdateHumanLine() {
-
+        //HumanManager.instance.HumanLineUpdate();
     }
 
     /// <summary>
@@ -345,8 +359,20 @@ public class StageController : MonoBehaviour {
         nowLineTime -= line[nowLineNumber].Time;
         nowLineNumber++;
         nowLineAddCount = 0;
-        if (nowLineNumber == line.Count) {
+        UpdateHumanLine();
+        if (nowLineNumber == line.Count)
+        {
             HumanLineEnd();
+            SoundManager.instance.ChangeBGMSpeed(1.0f);
+        }
+        else {
+            if (line[nowLineNumber].IsFever)
+            {
+                SoundManager.instance.ChangeBGMSpeed(1.5f);
+            }
+            else {
+                SoundManager.instance.ChangeBGMSpeed(1.0f);
+            }
         }
     }
 

@@ -19,7 +19,7 @@ public class HumanMove : MonoBehaviour {
 
     public static RectTransform defRect;//直前に生成されたHumanのRect
 
-    private void Awake()
+    public void Awake()
     {
         targetHumanRect = defRect;
         defRect = GetComponent<RectTransform>();

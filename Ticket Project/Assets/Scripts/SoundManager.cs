@@ -14,6 +14,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager> {
     }
 
     public enum BGMType {
+        main,
         title,
         stageSelect,
         main_normal,
@@ -42,6 +43,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager> {
     {
         bgmSource = gameObject.AddComponent<AudioSource>();
         DontDestroyOnLoad(gameObject);
+        PlayBGM(BGMType.main,true,1.0f);
     }
 
     private bool IsSameSE(SoundType key) {
@@ -72,16 +74,26 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager> {
         AudioSource audio = bgmSource;
         if (fadeTime > 0)
         {
-            StopCoroutine(bgm_fade);
-            System.Func<bool> comp = () =>
+            if (audio.isPlaying)
             {
-                bgm_fade = StartCoroutine(BGM_Fade(bgmSource, 1, fadeTime / 2));
+                StopCoroutine(bgm_fade);
+                System.Func<bool> comp = () =>
+                {
+                    bgm_fade = StartCoroutine(BGM_Fade(bgmSource, 1, fadeTime / 2));
+                    bgmSource.clip = bgm[(int)value];
+                    bgmSource.loop = isLoop;
+                    bgmSource.Play();
+                    return true;
+                };
+                bgm_fade = StartCoroutine(BGM_Fade(bgmSource, 0, fadeTime / 2, comp));
+            }
+            else {
+                audio.volume = 0;
+                bgm_fade = StartCoroutine(BGM_Fade(bgmSource, 1, fadeTime));
                 bgmSource.clip = bgm[(int)value];
                 bgmSource.loop = isLoop;
                 bgmSource.Play();
-                return true;
-            };
-            bgm_fade = StartCoroutine(BGM_Fade(bgmSource, 0, fadeTime / 2, comp));
+            }
         }
         else {
             audio.clip = bgm[(int)value];

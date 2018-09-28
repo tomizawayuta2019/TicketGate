@@ -23,8 +23,6 @@ public class StageInfo : MonoBehaviour {
     private Image second_spr;
     private float num;
     private float time;
-
-    public Text text;
     
 	void Start () {
         second_spr.sprite = secondnumber[0];
@@ -36,6 +34,7 @@ public class StageInfo : MonoBehaviour {
         //max_hour = 23;
 
         //num = 180.0f / (max_hour - min_hour);
+        Debug.Log(_controller.MaxTime);
         num = _controller.MaxTime / (max_hour - min_hour);
         ///時間が１進むのに必要な秒数を求める
         now_hour_first = now_hour = min_hour;

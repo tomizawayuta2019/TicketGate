@@ -9,6 +9,13 @@ public class StageSelect : MonoBehaviour {
     [SerializeField] Text[] stage_text; //ステージの名前
     [SerializeField] Text[] score_text; //スコア
 
+    public static StageState[] stages;
+
+    private void Awake()
+    {
+        stages = stage_num;
+    }
+
     [SerializeField] Button[] stage_button;  //ボタン
     void Start () {
 
