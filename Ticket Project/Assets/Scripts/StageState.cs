@@ -22,8 +22,12 @@ public struct HumanLine {
     float time;//終了までの時間
     public float Time { get { return time; } }
     [SerializeField]
-    float speed;//移動速度
-    public float Speed { get { return speed; } }
+    float moveSpeed;//移動速度
+    public float MoveSpeed { get { return moveSpeed; } }
+    [SerializeField]
+    [Range(0, 5f)]
+    float randomRange;
+    public float RandomRange { get { return randomRange; } }
 }
 
 [CreateAssetMenu]

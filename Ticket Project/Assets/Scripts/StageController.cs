@@ -195,6 +195,14 @@ public class StageController : MonoBehaviour {
     }
 
     /// <summary>
+    /// 人の動く速度を取得する処理（時間ごとにある程度ランダム）
+    /// </summary>
+    /// <returns></returns>
+    public float GetHumanMoveSpeed() {
+        return line[nowLineNumber].MoveSpeed + Random.Range(-line[nowLineNumber].RandomRange, line[nowLineNumber].RandomRange);
+    }
+
+    /// <summary>
     /// 不満度の加算
     /// </summary>
     /// <param name="value"></param>
