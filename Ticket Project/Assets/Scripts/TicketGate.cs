@@ -117,15 +117,15 @@ public class TicketGate : MonoBehaviour
             case TicketType.paper:
             case TicketType.paper_miss:
                 _gate = GateContoroller.Ticket;
-                Debug.Log("TICKET");
+                //Debug.Log("TICKET");
                 break;
             case TicketType.suica:
                 _gate = GateContoroller.Pasumo_OK;
-                Debug.Log("PASUMO");
+                //Debug.Log("PASUMO");
                 break;
             case TicketType.suica_miss:
                 _gate = GateContoroller.NO;
-                Debug.Log("PASUMO_NO");
+                //Debug.Log("PASUMO_NO");
                 break;
         }
         //タイマーを開始する
@@ -201,13 +201,13 @@ public class TicketGate : MonoBehaviour
         if (_gate == GateContoroller.NO)
         {
             //正しく止めたことを人クラスに渡す（関数呼び出し）
-            Debug.Log("SPACE");
+            //Debug.Log("SPACE");
             HumanManager.instance.GateClose(true);
         }
         else
         {
             //間違えて止めたことを人クラスに渡す（関数呼び出し）
-            Debug.Log("SPACE_BAD");
+            //Debug.Log("SPACE_BAD");
             HumanManager.instance.GateClose(false);
         }
         timeOn = false;
