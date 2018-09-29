@@ -254,6 +254,7 @@ public class HumanManager : MonoBehaviour {
         }
         HumanMove humanMove = GateInHuman.GetComponent<HumanMove>();
         humanMove.ReturnToGate();
+        GateInHuman = null;
         isMoveNow = false;
     }
 

@@ -18,6 +18,7 @@ public class HumanMove : MonoBehaviour {
     RectTransform targetHumanRect;//前を歩いている人のRect
 
     public bool isGateStart = false;
+    public bool isDestroy = false;//ゲートが閉じられて帰るところか否か
 
     public static RectTransform defRect;//直前に生成されたHumanのRect
     Vector2 ticketPos = new Vector2(0, 300);
@@ -97,6 +98,7 @@ public class HumanMove : MonoBehaviour {
     /// GotoStartPoss(() => { 何かの処理 })　でも呼べます。複数行も可。
     /// </param>
     public void GotoStartPoss(System.Action comp) {
+        if (isDestroy) { return; }
         MoveStop();
         move = StartCoroutine(Move(startPos, ()=> { comp();isGateStart = true;ChangeSprite(pass); }));
     }
@@ -110,6 +112,7 @@ public class HumanMove : MonoBehaviour {
     /// GotoStartPoss(() => { 何かの処理 })　でも呼べます。複数行も可。
     /// </param>
     public void GotoEndPos(System.Action comp) {
+        if (isDestroy) { return; }
         MoveStop();
         ChangeSprite(walk);
         if (ticket) { ticket.SetActive(false); }
@@ -120,15 +123,20 @@ public class HumanMove : MonoBehaviour {
     /// 画面外まで移動開始 移動が終わると自動でDestroyされる
     /// </summary>
     public void GotoOutScreen() {
+        if (isDestroy) { return; }
         MoveStop();
         if (ticket) { ticket.SetActive(true); }
         move = StartCoroutine(Move(endPos + new Vector2(outScreenDistance, 0), () => Destroy(gameObject)));
     }
 
+    /// <summary>
+    /// 改札を戻る
+    /// </summary>
     public void ReturnToGate() {
-        //MoveStop();
-        //move = StartCoroutine(Move(-endPos - new Vector2(outScreenDistance, 0), () => Destroy(gameObject)));
-        Destroy(gameObject);
+        isDestroy = true;
+        MoveStop();
+        move = StartCoroutine(Return(new Vector2(-1300, 0), () => Destroy(gameObject)));
+        //Destroy(gameObject);
     }
 
     /// <summary>
@@ -168,11 +176,26 @@ public class HumanMove : MonoBehaviour {
         if (comp != null) { comp(); }
     }
 
+    private IEnumerator Return(Vector2 targetPos, System.Action comp) {
+        rect.localScale = new Vector2(-rect.localScale.x,rect.localScale.y);//反転
+        do
+        {
+            yield return null;
+            rect.localPosition = (Vector2)rect.localPosition - new Vector2(1000 * Time.deltaTime, 0);
+        } while (rect.localPosition.x > targetPos.x);
+
+        rect.localPosition = new Vector2(targetPos.x, rect.localPosition.y);
+
+        //transform.position = targetPos;
+        if (comp != null) { comp(); }
+    }
+
     /// <summary>
     /// 直前に生成された人の直前の位置を取得する
     /// </summary>
     /// <returns></returns>
     private Vector2 GetTargetHumanWaitingPoss() {
+        if (targetHumanRect && targetHumanRect.GetComponent<HumanMove>().isDestroy) { targetHumanRect = null; }
         if (!targetHumanRect) { return new Vector2(Mathf.Infinity, 0); }
         //return (Vector2)targetHumanRect.localPosition - targetHumanRect.sizeDelta;
         return (Vector2)targetHumanRect.localPosition - new Vector2(300, 0);
