@@ -19,7 +19,7 @@ public class ReTimer : MonoBehaviour {
 	void Update () {
         if (retime <= 0f) { return; }
 
-        retime -= Time.deltaTime;
+        retime -= TimeManager.DeltaTime;
         seconds = (int)retime;
 
         if ((int)seconds != (int)oldSeconds)

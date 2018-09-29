@@ -290,6 +290,8 @@ public class StageController : MonoBehaviour {
     [HideInInspector]
     public HumanManager hManager;
 
+    public bool isGameEnd;
+
     /// <summary>
     /// 合計就業時間の取得
     /// </summary>
@@ -319,6 +321,7 @@ public class StageController : MonoBehaviour {
         nowStage = GetStage();
         line = new List<HumanLine>(nowStage.humans);
         hManager = gameObject.AddComponent<HumanManager>();
+        TimeManager.SetTime(1);
     }
 
     private void Update()
@@ -335,7 +338,7 @@ public class StageController : MonoBehaviour {
             return;
         }
         HumanLine nowLine = line[nowLineNumber];
-        nowLineTime += Time.deltaTime;
+        nowLineTime += TimeManager.DeltaTime;
         //時間が終了していたら次の時間帯へ
         if (nowLine.Time < nowLineTime)
         {
@@ -396,10 +399,16 @@ public class StageController : MonoBehaviour {
         nowStage.SetMaxScore(Score);
         nowStage.SetClear();
         GameResult.instance.FinishGame();
+        SoundManager.instance.PlaySE(SoundManager.SoundType.gameClear);
+        isGameEnd = true;
     }
 
     private void GameOver() {
         Debug.Log("Game Over...");
+        TimeManager.SetTime(0);
+        GameResult.instance.FinishGame();
+        SoundManager.instance.PlaySE(SoundManager.SoundType.gameOver);
+        isGameEnd = true;
     }
 
     /// <summary>

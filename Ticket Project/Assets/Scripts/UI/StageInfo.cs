@@ -45,7 +45,7 @@ public class StageInfo : MonoBehaviour {
 	void Update () {
         if (now_hour > max_hour) { return; }
         
-        time += Time.deltaTime;
+        time += TimeManager.DeltaTime;
 
         //numの値をtimeが超えたら現時間を１進める
         if (time >= num)

@@ -15,7 +15,7 @@ public class GameResult : SingletonMonoBehaviour<GameResult> {
     {
         if (IsFinish) {
             Vector3 pos = header.GetComponent<RectTransform>().localPosition;
-            if (pos.y > -350)
+            if (pos.y > 120)
             {
                 header.GetComponent<RectTransform>().localPosition -= new Vector3(0, 10, 0);
             }

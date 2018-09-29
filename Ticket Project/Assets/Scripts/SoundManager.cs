@@ -7,6 +7,8 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager> {
         ticketIn,//チケット入れる
         suicaIn,//
         Stop,//
+        gameClear,//クリア
+        gameOver,//失敗
         Train,//
         zawameki,//
         announce,//
@@ -117,7 +119,7 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager> {
         float defVolume = target.volume, deltaVolume = targetVolume - defVolume;
         float nowTime = 0;
 
-        while ((nowTime += Time.deltaTime) < time) {
+        while ((nowTime += TimeManager.DeltaTime) < time) {
             target.volume = defVolume + (deltaVolume * (nowTime / time));
             yield return null;
         }

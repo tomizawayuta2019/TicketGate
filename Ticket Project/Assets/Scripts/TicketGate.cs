@@ -77,8 +77,9 @@ public class TicketGate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (TimeManager.IsTimeStop || StageController.instance && StageController.instance.isGameEnd) { return; }
         if (_gate == GateContoroller.Start) return;
-        if (timeOn) { timer += Time.deltaTime; }
+        if (timeOn) { timer += TimeManager.DeltaTime; }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -268,7 +269,7 @@ public class TicketGate : MonoBehaviour
 
         while ((_gate == GateContoroller.Ticket || _gate == GateContoroller.Ticket_OK1 || _gate == GateContoroller.Ticket_OK2) && rect.localPosition.y < targetPos.y) {
             yield return null;
-            rect.localPosition = (Vector2)rect.localPosition + (new Vector2(0, 2000) * Time.deltaTime);
+            rect.localPosition = (Vector2)rect.localPosition + (new Vector2(0, 2000) * TimeManager.DeltaTime);
         }
 
         //rect.localPosition = targetPos;
@@ -278,7 +279,7 @@ public class TicketGate : MonoBehaviour
 
         while (rect.localPosition.y > defPos.y) {
             yield return null;
-            rect.localPosition = (Vector2)rect.localPosition - (new Vector2(0, 2000) * Time.deltaTime);
+            rect.localPosition = (Vector2)rect.localPosition - (new Vector2(0, 2000) * TimeManager.DeltaTime);
         }
 
         Destroy(ticket);
