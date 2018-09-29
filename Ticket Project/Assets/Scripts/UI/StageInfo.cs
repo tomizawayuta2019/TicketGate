@@ -6,61 +6,56 @@ public class StageInfo : MonoBehaviour {
     
     private StageController _controller;
     [SerializeField]
-    private Sprite[] firstnumber = new Sprite[10];
-    [SerializeField]
-    private Sprite[] secondnumber = new Sprite[3];
+    private Sprite[] _number = new Sprite[10];  // 0,1,2 格納
+
+    private float _maxtime; // 制限時間
+    private int _first;     // 一桁目
+    private int _second;    // 二桁目
+    private int _third;     // 三桁目
 
 
-    private int min_hour;   //始発
-    private int max_hour;   //終電
-    private int now_hour;   //現時間
-    private int now_hour_first;   //現時間  →  一桁目
-    private int now_hour_second;   //現時間  →  二桁目
-
     [SerializeField]
-    private Image first_spr;
-    [SerializeField]
-    private Image second_spr;
-    private float num;
+    private Image[] _spr = new Image[3];    // 三桁の数字のimage格納
     private float time;
     
 	void Start () {
-        second_spr.sprite = secondnumber[0];
 
         _controller = StageController.instance;
-        min_hour = _controller.nowStage.StartHour;
-        max_hour = _controller.nowStage.EndHour;
-        //min_hour = 5;
-        //max_hour = 23;
+        //min_hour = _controller.nowStage.StartHour;
+        //max_hour = _controller.nowStage.EndHour;
 
         //num = 180.0f / (max_hour - min_hour);
         Debug.Log(_controller.MaxTime);
-        num = _controller.MaxTime / (max_hour - min_hour);
-        ///時間が１進むのに必要な秒数を求める
-        now_hour_first = now_hour = min_hour;
-        first_spr.sprite = firstnumber[now_hour];
-
+        _maxtime = _controller.MaxTime + 1;
+        ReduceTimer(_maxtime);
 	}
 	
 	void Update () {
-        if (now_hour > max_hour) { return; }
-        
-        time += TimeManager.DeltaTime;
+        if(_maxtime < 0) { return; }
+        time = TimeManager.DeltaTime;
 
-        //numの値をtimeが超えたら現時間を１進める
-        if (time >= num)
+        _maxtime -= time;
+        ReduceTimer(_maxtime);
+    }
+
+    void ReduceTimer(float time)
+    {
+        if (_maxtime < 10) // 2桁目
         {
-            now_hour += 1;
-            now_hour_first += 1;
-            if (now_hour_first > 9)
-            {
-                now_hour_first = 0;
-                now_hour_second += 1;
-                second_spr.sprite = secondnumber[now_hour_second];
-            }
-            time -= num;
-            //余剰時間以外の部分を減らす
+            _spr[1].sprite = _number[0];
+            _spr[0].sprite = _number[(int)_maxtime];
         }
-        first_spr.sprite = firstnumber[now_hour_first];
+        else if ((_maxtime > 10) && (_maxtime < 100))
+        {
+            _spr[2].sprite = _number[0];
+            _spr[1].sprite = _number[(int)(_maxtime / 10)];
+            _spr[0].sprite = _number[(int)(_maxtime % 10)];
+        }
+        else if ((_maxtime >= 100) && (_maxtime < 1000))
+        {
+            _spr[2].sprite = _number[(int)(_maxtime / 100)];
+            _spr[1].sprite = _number[(int)(_maxtime % 100) / 10];
+            _spr[0].sprite = _number[(int)(_maxtime % 10)];
+        }
     }
 }
