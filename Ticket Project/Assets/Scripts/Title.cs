@@ -14,7 +14,8 @@ public class Title : MonoBehaviour {
 	void Update () {
         if (Input.GetKey(KeyCode.Space))
         {
-            SceneManager.LoadScene("Scene/StageSelect");
+            //SceneManager.LoadScene("Scene/StageSelect");
+            Fade.instance.FadeStart("Scene/StageSelect");
         }
 	}
 }
