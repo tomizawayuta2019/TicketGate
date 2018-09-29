@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TicketGate : MonoBehaviour
 {
@@ -32,6 +33,13 @@ public class TicketGate : MonoBehaviour
     private Animator staffAnim;
     [SerializeField]
     Canvas canvas;
+    public GameObject setumei;
+    private Image setumei_S;
+
+    /// <summary>
+    /// 0,← 1,→ 2,↑ 3,↓ 4,space
+    /// </summary>
+    public Sprite[] setumei_image = new Sprite[5];
 
     public static TicketGate instance;
 
@@ -43,6 +51,7 @@ public class TicketGate : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        setumei_S = setumei.GetComponent<Image>();
         staffAnim = staff.GetComponent<Animator>();
         timeOn = false;
         timer = 0;
@@ -121,16 +130,19 @@ public class TicketGate : MonoBehaviour
             case TicketType.paper_miss:
                 _gate = GateContoroller.Ticket;
                 StartCoroutine(TicketPreview(_ticket == TicketType.paper));
+                SpriteChange(0);
                 //Debug.Log("TICKET");
                 break;
             case TicketType.suica:
                 StartCoroutine(LampPreview(true));
                 _gate = GateContoroller.Pasumo_OK;
+                SpriteChange(2);
                 //Debug.Log("PASUMO");
                 break;
             case TicketType.suica_miss:
                 StartCoroutine(LampPreview(false));
                 _gate = GateContoroller.NO;
+                SpriteChange(4);
                 //Debug.Log("PASUMO_NO");
                 break;
         }
@@ -148,11 +160,13 @@ public class TicketGate : MonoBehaviour
         if (_ticket == TicketType.paper)
         {
             _gate = GateContoroller.Ticket_OK1;
+            SpriteChange(3);
             //Debug.Log("GOOD");
         }
         if (_ticket == TicketType.paper_miss)
         {
             _gate = GateContoroller.NO;
+            SpriteChange(4);
             //Debug.Log("NO_GOOD");
         }
     }
@@ -178,6 +192,7 @@ public class TicketGate : MonoBehaviour
                 //Debug.Log("↑");
                 EffectManager.instance.PlayEffect(EffectManager.EffectType.Peep, new Vector2(-300, 0));
                 SoundManager.instance.PlaySE(Random.Range(0, 3) == 0 ? SoundManager.SoundType.peep_ka : SoundManager.SoundType.peep_ra);
+                SpriteChange(5);
                 break;
             case GateContoroller.Ticket:
                 staffAnim.SetTrigger("toGet");
@@ -187,10 +202,12 @@ public class TicketGate : MonoBehaviour
             case GateContoroller.Ticket_OK1:
                 staffAnim.SetTrigger("toPush");
                 _gate = GateContoroller.Ticket_OK2;
+                SpriteChange(1);
                 //Debug.Log("↓");
                 break;
             case GateContoroller.Ticket_OK2:
                 staffAnim.SetTrigger("toOut");
+                SpriteChange(5);
                 Completed();
                 //Debug.Log("→");
                 break;
@@ -221,6 +238,7 @@ public class TicketGate : MonoBehaviour
         timeOn = false;
         timer = 0;
         _gate = GateContoroller.Start;
+        SpriteChange(5);
         EffectManager.instance.PlayEffect(EffectManager.EffectType.cutIn, Vector3.zero);
         SoundManager.instance.PlaySE(SoundManager.SoundType.Stop);
         //HumanManager.instance.EndPosComplate();
@@ -236,6 +254,7 @@ public class TicketGate : MonoBehaviour
         timer = 0;
         _gate = GateContoroller.Start;
         HumanManager.instance.EndPosComplate();
+        SpriteChange(5);
         Debug.Log("END");
     }
 
@@ -297,5 +316,40 @@ public class TicketGate : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         while (_gate == GateContoroller.NO || _gate == GateContoroller.Pasumo_OK) { yield return null; }
         Destroy(lamp);
+    }
+
+
+    /// <summary>
+    /// 説明用画像変更
+    /// 0,← 1,→ 2,↑ 3,↓ 4,space 5,null
+    /// </summary>
+    /// <param name="num">0,← 1,→ 2,↑ 3,↓ 4,space 5,null</param>
+    private void SpriteChange(int num)
+    {
+        setumei_S.color = new Color(1, 1, 1, 1);
+        switch (num)
+        {
+            case 0:
+                setumei_S.sprite = setumei_image[0];
+                break;
+            case 1:
+                setumei_S.sprite = setumei_image[1];
+                break;
+            case 2:
+                setumei_S.sprite = setumei_image[2];
+                break;
+            case 3:
+                setumei_S.sprite = setumei_image[3];
+                break;
+            case 4:
+                setumei_S.sprite = setumei_image[4];
+                break;
+            case 5:
+                setumei_S.sprite = null;
+                setumei_S.color = new Color(1, 1, 1, 0);
+                break;
+        }
+        if (num == 5) return;
+        setumei.GetComponent<RectTransform>().sizeDelta = setumei_S.sprite.rect.size;
     }
 }
