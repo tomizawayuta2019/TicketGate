@@ -177,6 +177,7 @@ public class TicketGate : MonoBehaviour
                 Completed();
                 //Debug.Log("↑");
                 EffectManager.instance.PlayEffect(EffectManager.EffectType.Peep, new Vector2(-300, 0));
+                SoundManager.instance.PlaySE(Random.Range(0, 2) == 0 ? SoundManager.SoundType.peep_ra : SoundManager.SoundType.peep_ka);
                 break;
             case GateContoroller.Ticket:
                 staffAnim.SetTrigger("toGet");

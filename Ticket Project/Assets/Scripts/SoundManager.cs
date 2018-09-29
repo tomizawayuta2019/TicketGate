@@ -9,6 +9,8 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager> {
         Stop,//
         gameClear,//クリア
         gameOver,//失敗
+        peep_ra,//ラさんピ音
+        peep_ka,//先生ピ音
         Train,//
         zawameki,//
         announce,//
