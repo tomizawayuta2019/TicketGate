@@ -14,6 +14,7 @@ public class HumanMove : MonoBehaviour {
     private const float outScreenDistance = 400;//改札から出てどれくらいまで歩くか
     private Coroutine move;
     RectTransform rect;
+    [SerializeField]
     RectTransform targetHumanRect;//前を歩いている人のRect
 
     public bool isGateStart = false;
@@ -173,6 +174,7 @@ public class HumanMove : MonoBehaviour {
     /// <returns></returns>
     private Vector2 GetTargetHumanWaitingPoss() {
         if (!targetHumanRect) { return new Vector2(Mathf.Infinity, 0); }
-        return (Vector2)targetHumanRect.localPosition - targetHumanRect.sizeDelta;
+        //return (Vector2)targetHumanRect.localPosition - targetHumanRect.sizeDelta;
+        return (Vector2)targetHumanRect.localPosition - new Vector2(300, 0);
     }
 }
