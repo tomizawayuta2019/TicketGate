@@ -215,6 +215,7 @@ public class HumanManager : MonoBehaviour {
         float firstTargetTime = firstInfo.GetTargetTime();
         float addScore = 10f;
         float addFrus = 0;
+        float frusPer = 5;
 
         // 経過＞目標
         if (finishTime > firstTargetTime)
@@ -229,7 +230,7 @@ public class HumanManager : MonoBehaviour {
 
         StageController.instance.PassHuman();
         StageController.instance.AddScore(addScore);
-        StageController.instance.AddFrustration(addFrus);
+        StageController.instance.AddFrustration(addFrus * frusPer);
     }
 
     /// <summary>
@@ -278,7 +279,7 @@ public class StageController : MonoBehaviour {
     private int nowLineAddCount = 0;
     [SerializeField]
     private float frustration;
-    public const float maxFrustration = 100;
+    public const float maxFrustration = 50;
     public float Frustration { get { return frustration; } }
     public string NowTimeName { get{ return nowLineNumber <= line.Count ? line[nowLineNumber].Name : "終業"; } }
     private int passHumanCount = 0;
